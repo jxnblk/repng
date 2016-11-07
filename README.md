@@ -48,4 +48,10 @@ and open <http://localhost:8080>
 repng Icon.js --dev
 ```
 
+Running the dev mode might require that you have both webpack and webpack-dev-server installed locally
+
+```sh
+npm i -D webpack webpack-dev-server
+```
+
 MIT License

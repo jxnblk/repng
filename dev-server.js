@@ -30,10 +30,11 @@ const config = {
         loader: 'babel-loader',
         query: {
           presets: [
-            'es2015',
-            'stage-0',
-            'react'
+            'babel-preset-es2015',
+            'babel-preset-stage-0',
+            'babel-preset-react',
           ]
+          .map(require.resolve)
         }
       }
     ]
@@ -43,9 +44,12 @@ const config = {
   ]
 }
 
+const reactPath = require.resolve('react')
+const reactDomPath = require.resolve('react-dom')
+
 const createEntry = ({ componentPath, css }) => (`
-const React = require('react')
-const ReactDOM = require('react-dom')
+const React = require('${reactPath}')
+const ReactDOM = require('${reactDomPath}')
 const Root = require('${componentPath}')
 
 const style = document.createElement('style')

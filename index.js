@@ -6,10 +6,10 @@ const Datauri = require('datauri')
 
 require('babel-register')({
   presets: [
-    'es2015',
-    'stage-0',
-    'react'
-  ]
+    'babel-preset-es2015',
+    'babel-preset-stage-0',
+    'babel-preset-react'
+  ].map(require.resolve)
 })
 
 module.exports = (Root, options = {}) => {
