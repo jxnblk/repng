@@ -47,7 +47,11 @@ if (!file) {
 
 const Root = require(path.resolve(process.cwd(), file))
 
-if (!Root) {
+const Comp = typeof Root.default ==='function'
+  ? Root.default
+  : Root
+
+if (!Comp) {
   console.warn('Could not find file: ', file)
 }
 
@@ -56,5 +60,5 @@ const options = Object.assign({
   outDir: process.cwd()
 }, cli.flags)
 
-render(Root, options)
+render(Comp, options)
 

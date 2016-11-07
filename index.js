@@ -4,6 +4,14 @@ const { renderToStaticMarkup } = require('react-dom/server')
 const Pageres = require('pageres')
 const Datauri = require('datauri')
 
+require('babel-register')({
+  presets: [
+    'es2015',
+    'stage-0',
+    'react'
+  ]
+})
+
 module.exports = (Root, options = {}) => {
   const {
     file = 'repng',
@@ -43,7 +51,7 @@ module.exports = (Root, options = {}) => {
     .dest(outDir)
     .run()
     .then(streams => {
-      console.log('Saved file to: ', outDir + filename)
+      console.log('Saved file to: ', outDir)
     })
 
   pageres.on('warning', () => {

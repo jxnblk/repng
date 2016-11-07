@@ -17,7 +17,7 @@ const Svg = props => h('svg', {
     y: 18,
     fill: '#02ffff',
     style: {
-      fontFamily: '"Roboto Mono", -apple-system, BlinkMacSystemFont, sans-serif',
+      fontFamily: '"Roboto Mono", monospace',
       fontWeight: 'bold',
       fontSize: 6
     }
