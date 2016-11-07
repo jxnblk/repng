@@ -8,18 +8,23 @@
   },
   "dependencies": {
     "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
     "datauri": "^1.0.4",
+    "memory-fs": "^0.3.0",
     "meow": "^3.7.0",
     "pageres": "^4.2.0",
     "react": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "react-dom": "^15.3.2",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
     "test": "node ./bin/repng.js example/Alt.js -w 512 -h 512 -c example/style.css -o example --no-crop",
+    "dev": "node ./bin/repng.js example/Alt.js --css example/style.css --dev",
     "help": "node ./bin/repng.js --help"
   },
   "keywords": [],

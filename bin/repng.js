@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
+const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
 const render = require('..')
+const devServer = require('../dev-server')
 
 // figure out no-crop?
 const cli = meow(`
@@ -27,6 +29,8 @@ const cli = meow(`
     -o --out-dir    Directory to save file to
 
     -f --filename   Name for rendered image
+
+    -D --dev        Runs a webpack-dev-server
 `, {
   alias: {
     c: 'css',
@@ -35,7 +39,8 @@ const cli = meow(`
     h: 'height',
     s: 'scale',
     d: 'delay',
-    o: 'outDir'
+    o: 'outDir',
+    D: 'dev'
   }
 })
 
@@ -45,7 +50,8 @@ if (!file) {
   console.warn('No Root component specified')
 }
 
-const Root = require(path.resolve(process.cwd(), file))
+const componentPath = path.resolve(process.cwd(), file)
+const Root = require(componentPath)
 
 const Comp = typeof Root.default ==='function'
   ? Root.default
@@ -53,6 +59,17 @@ const Comp = typeof Root.default ==='function'
 
 if (!Comp) {
   console.warn('Could not find file: ', file)
+}
+
+if (cli.flags.dev) {
+  const cssPath = cli.flags.css ? path.join(process.cwd(), cli.flags.css) : null
+  console.log('css path', cssPath)
+  let css
+  if (cli.flags.css && fs.existsSync(cssPath)) {
+    css = fs.readFileSync(cssPath, 'utf8').replace(/\n/g, '')
+  }
+  devServer(componentPath, css)
+  return
 }
 
 const options = Object.assign({

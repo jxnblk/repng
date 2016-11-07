@@ -35,6 +35,8 @@ repng Icon.js --width 512 --height 512 --out-dir assets
     -o --out-dir    Directory to save file to
 
     -f --filename   Name for rendered image
+
+    -D --dev        Runs a webpack dev server
 ```
 
 MIT License
