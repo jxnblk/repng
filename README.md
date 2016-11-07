@@ -3,6 +3,8 @@
 
 React component to PNG converter
 
+![](example/repng.png)
+
 ```sh
 npm i -g repng
 ```
