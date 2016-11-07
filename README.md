@@ -39,5 +39,13 @@ repng Icon.js --width 512 --height 512 --out-dir assets
     -D --dev        Runs a webpack dev server
 ```
 
-MIT License
+## Development mode
 
+To preview the component in a dev server, run repng with the `--dev` flag
+and open <http://localhost:8080>
+
+```sh
+repng Icon.js --dev
+```
+
+MIT License
