@@ -46,16 +46,21 @@ module.exports = (Root, options = {}) => {
     filename
   })
 
-  pageres
+  const result = pageres
     .src(data, [`${width}x${height}`])
     .dest(outDir)
     .run()
-    .then(streams => {
+
+  result.then(streams => {
+    if (outDir) {
       console.log('Saved file to: ', outDir)
-    })
+    }
+  })
 
   pageres.on('warning', () => {
     return 'Error'
   })
+
+  return result
 }
 
