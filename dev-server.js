@@ -36,6 +36,10 @@ const config = {
           ]
           .map(require.resolve)
         }
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
       }
     ]
   },
