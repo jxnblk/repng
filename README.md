@@ -54,4 +54,25 @@ Running the dev mode might require that you have both webpack and webpack-dev-se
 npm i -D webpack webpack-dev-server
 ```
 
+## Node.js Usage
+
+Repng can also be used as a node module.
+
+```js
+const repng = require('repng')
+const Component = require('./Component')
+
+const options = {
+  props: {
+    title: 'hello'
+  }
+}
+
+const result = repng(Comp, options)
+
+result.then(streams => {
+  console.log('rendered component')
+})
+```
+
 MIT License
