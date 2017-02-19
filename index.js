@@ -18,9 +18,9 @@ module.exports = (Root, options = {}) => {
     props,
     width = 1024,
     height = 768,
-    css,
+    css = '',
     crop = true,
-    scale,
+    scale = 1,
     delay,
     outDir,
   } = options
@@ -36,8 +36,10 @@ module.exports = (Root, options = {}) => {
   const key = file.split('/').reduce((a, b) => b)
   const filename = `${key}-<%= date %>-<%= time %>-<%= size %>`
 
+  const defaultCss = 'body{margin:0}'
+
   const pageres = new Pageres({
-    css,
+    css: defaultCss + css,
     crop,
     width,
     height,
