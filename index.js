@@ -46,10 +46,14 @@ module.exports = (Root, options = {}) => {
     filename
   })
 
-  const result = pageres
-    .src(data, [`${width}x${height}`])
-    .dest(outDir)
-    .run()
+  const result = outDir
+    ? pageres
+      .src(data, [`${width}x${height}`])
+      .dest(outDir)
+      .run()
+    : pageres
+      .src(data, [`${width}x${height}`])
+      .run()
 
   result.then(streams => {
     if (outDir) {
