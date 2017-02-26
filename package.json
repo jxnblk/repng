@@ -15,13 +15,13 @@
     "babel-register": "^6.18.0",
     "datauri": "^1.0.4",
     "json-loader": "^0.5.4",
-    "memory-fs": "^0.3.0",
+    "memory-fs": "^0.4.1",
     "meow": "^3.7.0",
     "pageres": "^4.2.0",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
-    "webpack": "^1.13.3",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
   },
   "scripts": {
     "test": "node ./bin/repng.js example/Alt.js -w 512 -h 512 -c example/style.css -o example --no-crop",
