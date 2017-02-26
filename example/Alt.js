@@ -23,7 +23,7 @@ const Svg = props => (
       fill='#02ffff'
       style={{
         fontFamily: '"Roboto Mono", monospace',
-        fontWeight: 'bold',
+        fontWeight: 400,
         fontSize: 6
       }}>
       $ repng

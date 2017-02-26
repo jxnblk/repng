@@ -11,8 +11,8 @@ const config = {
     'webpack/hot/dev-server',
     path.resolve(__dirname, 'entry.js')
   ],
-  resolveLoaders: {
-    root: [
+  resolveLoader: {
+    modules: [
       __dirname,
       path.resolve(__dirname, 'node_modules'),
       path.resolve(process.cwd(), 'node_modules'),
@@ -23,12 +23,12 @@ const config = {
     filename: 'dev.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-        query: {
+        options: {
           presets: [
             'babel-preset-es2015',
             'babel-preset-stage-0',
@@ -36,10 +36,6 @@ const config = {
           ]
           .map(require.resolve)
         }
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
       }
     ]
   },

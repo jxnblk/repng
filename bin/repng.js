@@ -62,13 +62,14 @@ if (!Comp) {
   console.warn('Could not find file: ', file)
 }
 
+const cssPath = cli.flags.css ? path.join(process.cwd(), cli.flags.css) : null
+console.log('css path', cssPath)
+let css
+if (cli.flags.css && fs.existsSync(cssPath)) {
+  css = fs.readFileSync(cssPath, 'utf8').replace(/\n/g, '')
+}
+
 if (cli.flags.dev) {
-  const cssPath = cli.flags.css ? path.join(process.cwd(), cli.flags.css) : null
-  console.log('css path', cssPath)
-  let css
-  if (cli.flags.css && fs.existsSync(cssPath)) {
-    css = fs.readFileSync(cssPath, 'utf8').replace(/\n/g, '')
-  }
   devServer(componentPath, css)
   return
 }
@@ -76,7 +77,9 @@ if (cli.flags.dev) {
 const options = Object.assign({
   file,
   outDir: process.cwd()
-}, cli.flags)
+}, cli.flags, {
+  css
+})
 
 render(Comp, options)
 

@@ -24,7 +24,7 @@
     "webpack-dev-server": "^2.4.1"
   },
   "scripts": {
-    "test": "node ./bin/repng.js example/Alt.js -w 512 -h 512 -c example/style.css -o example --no-crop",
+    "test": "node ./bin/repng.js example/Alt.js -w 512 -h 512 -c example/style.css -o example --no-crop -f repng",
     "dev": "node ./bin/repng.js example/Alt.js --css example/style.css --dev",
     "help": "node ./bin/repng.js --help"
   },
