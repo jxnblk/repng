@@ -40,6 +40,7 @@ const cli = meow(`
     s: 'scale',
     d: 'delay',
     o: 'outDir',
+    f: 'filename',
     D: 'dev'
   }
 })

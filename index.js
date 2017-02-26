@@ -23,6 +23,7 @@ module.exports = (Root, options = {}) => {
     scale = 1,
     delay,
     outDir,
+    filename,
   } = options
 
   const html = renderToStaticMarkup(h(Root, props))
@@ -34,7 +35,7 @@ module.exports = (Root, options = {}) => {
   const data = datauri.content
 
   const key = file.split('/').reduce((a, b) => b)
-  const filename = `${key}-<%= date %>-<%= time %>-<%= size %>`
+  const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
 
   const defaultCss = 'body{margin:0}'
 
@@ -45,7 +46,7 @@ module.exports = (Root, options = {}) => {
     height,
     scale,
     delay,
-    filename
+    filename: filename || defaultFilename
   })
 
   const result = outDir
