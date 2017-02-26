@@ -3,6 +3,8 @@
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
+const chalk = require('chalk')
+const { Spinner } = require('cli-spinner')
 const render = require('..')
 const devServer = require('../dev-server')
 
