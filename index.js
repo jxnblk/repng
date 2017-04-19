@@ -5,26 +5,25 @@ const Pageres = require('pageres')
 const Datauri = require('datauri')
 
 require('babel-register')({
+  plugins: [
+    'babel-plugin-transform-async-to-generator',
+    'babel-plugin-transform-runtime'
+  ].map(require.resolve),
   presets: [
-    'babel-preset-es2015',
+    'babel-preset-env',
     'babel-preset-stage-0',
     'babel-preset-react'
   ].map(require.resolve)
 })
 
-module.exports = (Root, options = {}) => {
+module.exports = (Root, _options = {}) => {
   const {
-    file = 'repng',
+    _file = 'repng',
     props,
-    width = 1024,
-    height = 768,
     css = '',
-    crop = true,
-    scale = 1,
-    delay,
-    outDir,
     filename,
-  } = options
+    outDir,
+  } = _options
 
   const html = renderToStaticMarkup(h(Root, props))
 
@@ -34,33 +33,41 @@ module.exports = (Root, options = {}) => {
   datauri.format('.html', buffer)
   const data = datauri.content
 
-  const key = file.split('/').reduce((a, b) => b)
+  const key = _file.split('/').slice(-1)
   const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
+  const defaultCss = '*{box-sizing:border-box}body{margin:0}'
 
-  const defaultCss = 'body{margin:0}'
-
-  const pageres = new Pageres({
+  const opts = Object.assign({
+    width: 1024,
+    height: 768,
+    crop: true,
+    scale: 1,
+  }, _options, {
     css: defaultCss + css,
-    crop,
-    width,
-    height,
-    scale,
-    delay,
     filename: filename || defaultFilename
   })
 
+  const pageres = new Pageres(opts)
+
   const result = outDir
     ? pageres
-      .src(data, [`${width}x${height}`])
+      .src(data, [`${opts.width}x${opts.height}`])
       .dest(outDir)
       .run()
     : pageres
-      .src(data, [`${width}x${height}`])
+      .src(data, [`${opts.width}x${opts.height}`])
       .run()
 
   result.then(streams => {
     if (outDir) {
-      console.log('Saved file to: ', outDir)
+      const msg = 'Saved file to ' + outDir
+      if (global.spinner) {
+        spinner.succeed(msg)
+      } else {
+        console.log(msg)
+      }
+    } else {
+      return streams
     }
   })
 

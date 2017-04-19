@@ -57,7 +57,7 @@ const app = document.createElement('div')
 document.body.appendChild(app)
 document.head.appendChild(style)
 
-style.innerHTML = \`${css}\`
+style.innerHTML = \`*{box-sizing:border-box}body{margin:0}${css}\`
 
 const App = typeof Root.default === 'function' ? Root.default : Root
 ReactDOM.render(React.createElement(App), app)
