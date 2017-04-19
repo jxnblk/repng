@@ -5,11 +5,11 @@ const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const MemoryFS = require('memory-fs')
 
-const config = {
+const config = ({ port }) => ({
   entry: [
-    'webpack-dev-server/client?http://localhost:8080/',
+    `webpack-dev-server/client?http://localhost:${port}`,
     'webpack/hot/dev-server',
-    path.resolve(__dirname, 'entry.js')
+    path.resolve(__dirname, 'entry.js'),
   ],
   resolveLoader: {
     modules: [
@@ -27,14 +27,17 @@ const config = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
+        loader: require.resolve('babel-loader'),
         options: {
+          plugins: [
+            'babel-plugin-transform-async-to-generator',
+            'babel-plugin-transform-runtime'
+          ].map(require.resolve),
           presets: [
-            'babel-preset-es2015',
+            'babel-preset-env',
             'babel-preset-stage-0',
             'babel-preset-react',
-          ]
-          .map(require.resolve)
+          ].map(require.resolve)
         }
       }
     ]
@@ -42,7 +45,7 @@ const config = {
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ]
-}
+})
 
 const reactPath = require.resolve('react')
 const reactDomPath = require.resolve('react-dom')
@@ -63,7 +66,12 @@ const App = typeof Root.default === 'function' ? Root.default : Root
 ReactDOM.render(React.createElement(App), app)
 `)
 
-module.exports = (componentPath, css = '') => {
+module.exports = (opts) => {
+  const {
+    componentPath,
+    css = '',
+    port = 8080
+  } = opts
   const entry = createEntry({ componentPath, css })
 
   const mfs = new MemoryFS()
@@ -93,7 +101,7 @@ module.exports = (componentPath, css = '') => {
   mfs.mkdirpSync(path.join(__dirname, '/'))
   mfs.writeFileSync(path.join(__dirname, 'entry.js'), entry)
 
-  const compiler = webpack(config)
+  const compiler = webpack(config({ port }))
 
   compiler.inputFileSystem = mfs
   compiler.resolvers.normal.fileSystem = mfs
@@ -106,8 +114,8 @@ module.exports = (componentPath, css = '') => {
     historyApiFallback: { index: '/dev' }
   })
 
-  server.listen(8080, 'localhost', () => {
-    console.log('Listening on port 8080')
+  server.listen(port, 'localhost', () => {
+    console.log(`Listening on port ${port}`)
   })
 }
 
