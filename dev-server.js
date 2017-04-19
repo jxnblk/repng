@@ -11,7 +11,7 @@ const config = ({ port }) => ({
     'webpack/hot/dev-server',
     path.resolve(__dirname, 'entry.js'),
   ],
-  resolveLoader: {
+  resolve: {
     modules: [
       __dirname,
       path.resolve(__dirname, 'node_modules'),
