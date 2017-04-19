@@ -3,12 +3,10 @@
 const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
-const chalk = require('chalk')
-const { Spinner } = require('cli-spinner')
+const ora = require('ora')
 const render = require('..')
 const devServer = require('../dev-server')
 
-// figure out no-crop?
 const cli = meow(`
   Usage
     $ repng <Root-component>
@@ -16,13 +14,13 @@ const cli = meow(`
   Options
     -c --css        CSS file to include
 
-    -p --props      Props to pass to the React component
+    -p --props      Props in JSON format to pass to the React component
 
     -w --width      Width of image
 
     -h --height     Height of image
 
-    --crop          Crop image to specified height
+    -C --crop          Crop image to specified height
 
     -s --scale      Scale image
 
@@ -39,6 +37,7 @@ const cli = meow(`
     p: 'props',
     w: 'width',
     h: 'height',
+    C: 'crop',
     s: 'scale',
     d: 'delay',
     o: 'outDir',
@@ -47,13 +46,16 @@ const cli = meow(`
   }
 })
 
-const file = cli.input[0]
+const filepath = cli.input[0]
 
-if (!file) {
-  console.warn('No Root component specified')
+global.spinner = ora(`Reading ${filepath}`).start()
+
+if (!filepath) {
+  spinner.fail('No Root component specified')
+  return
 }
 
-const componentPath = path.resolve(process.cwd(), file)
+const componentPath = path.resolve(process.cwd(), filepath)
 const Root = require(componentPath)
 
 const Comp = typeof Root.default ==='function'
@@ -61,27 +63,41 @@ const Comp = typeof Root.default ==='function'
   : Root
 
 if (!Comp) {
-  console.warn('Could not find file: ', file)
+  spinner.fail(`Could not file file: ${componentPath}`)
+  return
 }
 
 const cssPath = cli.flags.css ? path.join(process.cwd(), cli.flags.css) : null
-console.log('css path', cssPath)
 let css
 if (cli.flags.css && fs.existsSync(cssPath)) {
+  spinner.text = `Importing CSS: ${cssPath}`
   css = fs.readFileSync(cssPath, 'utf8').replace(/\n/g, '')
 }
 
+if (cli.flags.props) {
+  try {
+    spinner.text = (`Parsing JSON props`)
+    cli.flags.props = JSON.parse(cli.flags.props)
+  } catch (e) {
+    spinner.text = (`Could not parsing props (${cli.flag.props})`)
+  }
+}
+
 if (cli.flags.dev) {
+  spinner.info(`Starting dev server`)
   devServer(componentPath, css)
   return
 }
 
+
 const options = Object.assign({
-  file,
+  _file: componentPath,
   outDir: process.cwd()
 }, cli.flags, {
   css
 })
 
 render(Comp, options)
+
+spinner.succeed(`Rendered component to PNG`)
 
