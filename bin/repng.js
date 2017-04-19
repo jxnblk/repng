@@ -20,7 +20,7 @@ const cli = meow(`
 
     -h --height     Height of image
 
-    -C --crop          Crop image to specified height
+    -C --crop       Crop image to specified height
 
     -s --scale      Scale image
 
@@ -31,6 +31,8 @@ const cli = meow(`
     -f --filename   Name for rendered image
 
     -D --dev        Runs a webpack-dev-server
+
+    -P --port       Port to run the dev server on (default 8080)
 `, {
   alias: {
     c: 'css',
@@ -42,7 +44,8 @@ const cli = meow(`
     d: 'delay',
     o: 'outDir',
     f: 'filename',
-    D: 'dev'
+    D: 'dev',
+    P: 'port'
   }
 })
 
@@ -79,16 +82,9 @@ if (cli.flags.props) {
     spinner.text = (`Parsing JSON props`)
     cli.flags.props = JSON.parse(cli.flags.props)
   } catch (e) {
-    spinner.text = (`Could not parsing props (${cli.flag.props})`)
+    spinner.text = (`Could not parse props (${cli.flags.props})`)
   }
 }
-
-if (cli.flags.dev) {
-  spinner.info(`Starting dev server`)
-  devServer(componentPath, css)
-  return
-}
-
 
 const options = Object.assign({
   _file: componentPath,
@@ -96,6 +92,12 @@ const options = Object.assign({
 }, cli.flags, {
   css
 })
+
+if (cli.flags.dev) {
+  spinner.info(`Starting dev server`)
+  devServer(Object.assign({ componentPath }, options))
+  return
+}
 
 render(Comp, options)
 
