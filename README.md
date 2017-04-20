@@ -20,13 +20,13 @@ repng Icon.js --width 512 --height 512 --out-dir assets
   Options
     -c --css        CSS file to include
 
-    -p --props      Props to pass to the React component
+    -p --props      Props in JSON format to pass to the React component
 
     -w --width      Width of image
 
     -h --height     Height of image
 
-    --crop          Crop image to specified height
+    -C --crop       Crop image to specified height
 
     -s --scale      Scale image
 
@@ -36,7 +36,11 @@ repng Icon.js --width 512 --height 512 --out-dir assets
 
     -f --filename   Name for rendered image
 
-    -D --dev        Runs a webpack dev server
+    -F --font       Path to font to include as a webfont
+
+    -D --dev        Runs a webpack-dev-server
+
+    -P --port       Port to run the dev server on (default 8080)
 ```
 
 ## Development mode
