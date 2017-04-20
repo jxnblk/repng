@@ -36,7 +36,7 @@ module.exports = (Root, _options = {}) => {
   const key = _file.split('/').slice(-1)
   const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
   // Using !important to override screenshot-stream's default color
-  // https://github.com/jxnblk/screenshot-stream/blob/master/stream.js#L83-L85
+  // https://github.com/kevva/screenshot-stream/blob/master/stream.js#L83-L85
   const defaultCss = '*{box-sizing:border-box}body{margin:0;background-color:transparent!important}'
 
   const opts = Object.assign({
