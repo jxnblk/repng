@@ -30,6 +30,8 @@ const cli = meow(`
 
     -f --filename   Name for rendered image
 
+    -F --font       Path to font to include as a webfont
+
     -D --dev        Runs a webpack-dev-server
 
     -P --port       Port to run the dev server on (default 8080)
@@ -44,6 +46,7 @@ const cli = meow(`
     d: 'delay',
     o: 'outDir',
     f: 'filename',
+    F: 'font',
     D: 'dev',
     P: 'port'
   }

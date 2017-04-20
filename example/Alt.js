@@ -22,7 +22,7 @@ const Svg = props => (
       y={18}
       fill='#02ffff'
       style={{
-        fontFamily: '"Roboto Mono", monospace',
+        fontFamily: '"RobotoMono-Regular", serif',
         fontWeight: 400,
         fontSize: 6
       }}>

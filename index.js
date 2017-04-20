@@ -1,4 +1,5 @@
 
+const path = require('path')
 const { createElement: h } = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const Pageres = require('pageres')
@@ -35,9 +36,15 @@ module.exports = (Root, _options = {}) => {
 
   const key = _file.split('/').slice(-1)
   const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
+
+  let wfcss = ''
+  if (_options.font) {
+    wfcss = getWebfontCss(_options.font)
+  }
+
   // Using !important to override screenshot-stream's default color
   // https://github.com/kevva/screenshot-stream/blob/master/stream.js#L83-L85
-  const defaultCss = '*{box-sizing:border-box}body{margin:0;background-color:transparent!important}'
+  const defaultCss = `*{box-sizing:border-box}body{margin:0;background-color:transparent!important}${wfcss}`
 
   const opts = Object.assign({
     width: 1024,
@@ -78,5 +85,17 @@ module.exports = (Root, _options = {}) => {
   })
 
   return result
+}
+
+const getWebfontCss = (fontpath) => {
+  const { content } = new Datauri(fontpath)
+  const [ name, ext ] = fontpath.split('/').slice(-1)[0].split('.')
+  const css = (`@font-face {
+  font-family: '${name}';
+  font-style: normal;
+  font-weight: 400;
+  src: url(${content});
+}`)
+  return css
 }
 
