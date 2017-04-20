@@ -11,8 +11,8 @@
   },
   "scripts": {
     "test": "ava",
-    "cli-test": "./bin/repng.js example/Alt.js -w 512 -h 512 -c example/style.css -o example --no-crop -f repng -p '{\"foo\":16}'",
-    "dev": "./bin/repng.js example/Alt.js --css example/style.css --dev --port 8000",
+    "cli-test": "./bin/repng.js example/Alt.js -w 512 -h 512 -o example --no-crop -F example/RobotoMono-Regular.woff2 -f repng",
+    "dev": "./bin/repng.js example/Alt.js --dev --port 8000",
     "help": "./bin/repng.js --help"
   },
   "dependencies": {
