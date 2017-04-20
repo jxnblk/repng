@@ -41,7 +41,10 @@ module.exports = (Root, _options = {}) => {
   if (_options.font) {
     wfcss = getWebfontCss(_options.font)
   }
-  const defaultCss = `*{box-sizing:border-box}body{margin:0}${wfcss}`
+
+  // Using !important to override screenshot-stream's default color
+  // https://github.com/kevva/screenshot-stream/blob/master/stream.js#L83-L85
+  const defaultCss = `*{box-sizing:border-box}body{margin:0;background-color:transparent!important}${wfcss}`
 
   const opts = Object.assign({
     width: 1024,
