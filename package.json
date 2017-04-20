@@ -1,6 +1,6 @@
 {
   "name": "repng",
-  "version": "1.0.0-b8",
+  "version": "1.0.0-b9",
   "description": "React component to PNG converter",
   "main": "index.js",
   "bin": {
