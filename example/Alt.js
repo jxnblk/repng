@@ -13,8 +13,8 @@ const Svg = props => (
       margin: 0
     }}>
     <rect
-      width={30}
-      height={30}
+      width={32}
+      height={32}
       rx={16}
       rx={16}
       fill='#222' />
