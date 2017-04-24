@@ -1,9 +1,11 @@
 
+const fs = require('fs')
 const path = require('path')
 const { createElement: h } = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
-const Pageres = require('pageres')
 const Datauri = require('datauri')
+
+const Nightmare = require('nightmare')
 
 require('babel-register')({
   plugins: [
@@ -26,13 +28,7 @@ module.exports = (Root, _options = {}) => {
     outDir,
   } = _options
 
-  const html = renderToStaticMarkup(h(Root, props))
-
-  const datauri = new Datauri()
-  const buffer = new Buffer(html, 'utf8')
-
-  datauri.format('.html', buffer)
-  const data = datauri.content
+  const body = renderToStaticMarkup(h(Root, props))
 
   const key = _file.split('/').slice(-1)
   const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
@@ -42,31 +38,51 @@ module.exports = (Root, _options = {}) => {
     wfcss = getWebfontCss(_options.font)
   }
 
-  // Using !important to override screenshot-stream's default color
-  // https://github.com/kevva/screenshot-stream/blob/master/stream.js#L83-L85
-  const defaultCss = `*{box-sizing:border-box}body{margin:0;background-color:transparent!important}${wfcss}`
+  const defaultCss = `*{box-sizing:border-box}body{margin:0}${wfcss}`
+
+  const html = `<style>${defaultCss + css}</style>${body}`
+  const buffer = new Buffer(html, 'utf8')
+  const datauri = new Datauri()
+  datauri.format('.html', buffer)
+  const data = datauri.content
 
   const opts = Object.assign({
     width: 1024,
     height: 768,
-    crop: true,
-    scale: 1,
+    // crop: true,
+    // ?? scale: 1,
   }, _options, {
-    css: defaultCss + css,
-    filename: filename || defaultFilename
+    // ?? css: defaultCss + css,
+    // ?? filename: filename || defaultFilename,
+    show: false
   })
 
-  const pageres = new Pageres(opts)
+  console.log(opts)
 
-  const result = outDir
-    ? pageres
-      .src(data, [`${opts.width}x${opts.height}`])
-      .dest(outDir)
-      .run()
-    : pageres
-      .src(data, [`${opts.width}x${opts.height}`])
-      .run()
+  const nightmare = Nightmare(opts)
 
+  const buff = nightmare
+    .goto(data)
+    .wait(_options.delay)
+  // .screenshot()
+    .screenshot(null, {
+      x: 0,
+      y: 0,
+      width: opts.width,
+      height: opts.height,
+    })
+    /*
+    */
+
+  return buff.then(res => {
+    const file = fs.createWriteStream('out.png')
+    file.write(res)
+    file.end()
+    // console.log(file)
+    return res
+  })
+
+  /*
   result.then(streams => {
     if (outDir) {
       const msg = 'Saved file to ' + outDir
@@ -79,12 +95,7 @@ module.exports = (Root, _options = {}) => {
       return streams
     }
   })
-
-  pageres.on('warning', () => {
-    return 'Error'
-  })
-
-  return result
+  */
 }
 
 const getWebfontCss = (fontpath) => {
