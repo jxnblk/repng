@@ -1,6 +1,6 @@
 {
   "name": "repng",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.1",
   "description": "React component to PNG converter",
   "main": "index.js",
   "bin": {
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "ava",
-    "cli-test": "./bin/repng.js example/Alt.js -w 512 -h 512 -o example --no-crop -F example/RobotoMono-Regular.woff2 -f repng",
+    "cli-test": "./bin/repng.js example/Alt.js -w 512 -h 512 -o example --no-crop -F example/RobotoMono-Regular.woff2 -f repng -s .5",
     "dev": "./bin/repng.js example/Alt.js --dev --port 8000",
     "help": "./bin/repng.js --help"
   },

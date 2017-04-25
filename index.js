@@ -26,6 +26,7 @@ module.exports = (Root, _options = {}) => {
     css = '',
     filename,
     outDir,
+    scale = 1
   } = _options
 
   const body = renderToStaticMarkup(h(Root, props))
@@ -49,7 +50,7 @@ module.exports = (Root, _options = {}) => {
     enableLargerThanScreen: true,
     frame: false,
     webPreferences: {
-      zoomFactor: _options.scale
+      zoomFactor: _options.scale < 1 ? _options.scale : 1
     },
   }, _options)
 
@@ -60,7 +61,12 @@ module.exports = (Root, _options = {}) => {
   const result = nightmare
     .goto(data)
     .wait(_options.delay)
-    .screenshot(null, { x: 0, y: 0, width, height })
+    .screenshot(null, {
+      x: 0,
+      y: 0,
+      width: width * scale,
+      height: height * scale
+    })
 
   const stream = new Readable()
   // wut?
