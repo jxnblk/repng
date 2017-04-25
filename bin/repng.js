@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const meow = require('meow')
 const ora = require('ora')
+const { template } = require('lodash')
 const render = require('..')
 const devServer = require('../dev-server')
 
@@ -102,7 +103,72 @@ if (cli.flags.dev) {
   return
 }
 
-render(Comp, options)
+spinner.text = 'Rendering component'
 
-spinner.succeed(`Rendered component to PNG`)
+const stream = render(Comp, options)
+
+const writeFile = (stream, opts) => {
+  const {
+    outDir,
+    _file,
+    filename,
+    width = 512,
+    height = 512,
+  } = opts
+
+  const key = _file.split('/').slice(-1)
+  const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
+
+  const { date, time } = getDateTime()
+  const name = template(filename || defaultFilename)({
+    size: width + 'x' + height,
+    width,
+    height,
+    date,
+    time
+  })
+  spinner.text = 'Writing file'
+
+  const filepath = path.join(outDir, name + '.png')
+  const file = fs.createWriteStream(filepath)
+
+  const isStream = require('is-stream')
+
+  file.on('finish', () => {
+    spinner.succeed('Saved file to ' + filepath)
+    process.exit()
+  })
+
+  stream.on('readable', () => {
+    stream.pipe(file)
+  })
+
+  stream.on('error', e => {
+    spinner.fail('Error', e)
+  })
+}
+
+const getDateTime = () => {
+  const now = new Date()
+  const Y = now.getFullYear()
+  const M = now.getMonth()
+  const d = now.getDate()
+  const h = now.getHours()
+  const m = now.getMinutes()
+  const s = now.getSeconds()
+  return {
+    date: [ Y, M, d ].join('-'),
+    time: [ h, m, s ].join('.')
+  }
+}
+
+// always true??
+if (cli.flags.outDir) {
+  writeFile(stream, options)
+} else {
+  stream.on('end', () => {
+    spinner.succeed(`Rendered component to PNG`)
+    return
+  })
+}
 
