@@ -1,5 +1,4 @@
 
-const fs = require('fs')
 const test = require('ava')
 const React = require('react')
 const isStream = require('is-stream')
@@ -25,16 +24,12 @@ test('returns a stream', async t => {
     delay: 100,
     filename: 'test',
     props: {
-      // width: 24,
-      // height,
+      width,
+      height,
       // size: 2
     }
-    // css: 'body{background-color:tomato}'
   })
 
-  const file = fs.createWriteStream('_test.png')
-  result.pipe(file)
-  // file.end()
   t.true(isStream(result))
 })
 

@@ -15,8 +15,8 @@ const Svg = props => (
     <rect
       width={32}
       height={32}
-      rx={16}
-      rx={16}
+      rx={1/4}
+      rx={1/4}
       fill='#222' />
     <text
       textAnchor='middle'

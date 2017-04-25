@@ -5,7 +5,6 @@ const path = require('path')
 const { createElement: h } = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const Datauri = require('datauri')
-
 const Nightmare = require('nightmare')
 
 require('babel-register')({
@@ -31,24 +30,17 @@ module.exports = (Root, _options = {}) => {
 
   const body = renderToStaticMarkup(h(Root, props))
 
-  // Todo: handle this?
-  const key = _file.split('/').slice(-1)
-  const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
-
   // todo: move to createCss function
   let wfcss = ''
   if (_options.font) {
     wfcss = getWebfontCss(_options.font)
   }
 
-  const defaultCss = `*{box-sizing:border-box}body{margin:0}${wfcss}`
-
-  // todo: createHtml()
-  const html = `<!DOCTYPE html><style>${defaultCss + css}</style>${body}`
-  const htmlBuffer = new Buffer(html, 'utf8')
-  const datauri = new Datauri()
-  datauri.format('.html', htmlBuffer)
-  const data = datauri.content
+  const data = getHtmlData({
+    body,
+    baseCss,
+    css: wfcss + css
+  })
 
   const opts = Object.assign({
     show: false,
@@ -58,58 +50,31 @@ module.exports = (Root, _options = {}) => {
     frame: false,
     webPreferences: {
       zoomFactor: _options.scale
-    }
+    },
   }, _options)
+
+  const { width, height } = opts
 
   const nightmare = Nightmare(opts)
 
   const result = nightmare
     .goto(data)
     .wait(_options.delay)
-    .screenshot(null, {
-      x: 0,
-      y: 0,
-      width: opts.width,
-      height: opts.height,
-    })
+    .screenshot(null, { x: 0, y: 0, width, height })
 
-  return result.then(buffer => {
-    const stream = new Readable()
+  const stream = new Readable()
+  // wut?
+  stream._read = () => {}
+
+  result.then(buffer => {
     stream.push(buffer)
     stream.push(null)
-    // const stream = fs.createReadStream(buffer)
-
-    const file = fs.createWriteStream('out2.png')
-    file.write(buffer)
-    file.end()
-
-    // console.log('stream', stream)
-    if (outDir) {
-      /*
-      // console.log(file)
-      */
-    }
-    return stream
-    // return buff
   })
 
-  // return result
-
-  /*
-  result.then(streams => {
-    if (outDir) {
-      const msg = 'Saved file to ' + outDir
-      if (global.spinner) {
-        spinner.succeed(msg)
-      } else {
-        console.log(msg)
-      }
-    } else {
-      return streams
-    }
-  })
-  */
+  return stream
 }
+
+const baseCss = `*{box-sizing:border-box}body{margin:0}`
 
 const getWebfontCss = (fontpath) => {
   const { content } = new Datauri(fontpath)
@@ -121,5 +86,14 @@ const getWebfontCss = (fontpath) => {
   src: url(${content});
 }`)
   return css
+}
+
+const getHtmlData = ({ body, baseCss, css }) => {
+  const html = `<!DOCTYPE html><style>${baseCss + css}</style>${body}`
+  const htmlBuffer = new Buffer(html, 'utf8')
+  const datauri = new Datauri()
+  datauri.format('.html', htmlBuffer)
+  const data = datauri.content
+  return data
 }
 

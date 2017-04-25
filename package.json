@@ -26,6 +26,7 @@
     "babel-register": "^6.24.1",
     "datauri": "^1.0.4",
     "json-loader": "^0.5.4",
+    "lodash": "^4.17.4",
     "memory-fs": "^0.4.1",
     "meow": "^3.7.0",
     "nightmare": "^2.10.0",
