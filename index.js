@@ -49,8 +49,11 @@ module.exports = (Root, _options = {}) => {
     height: 512,
     enableLargerThanScreen: true,
     frame: false,
+    switches: {
+      'force-device-scale-factor': 1
+    },
     webPreferences: {
-      zoomFactor: _options.scale < 1 ? _options.scale : 1
+      zoomFactor: scale
     },
   }, _options)
 
