@@ -7,6 +7,17 @@ const { renderToStaticMarkup } = require('react-dom/server')
 const Datauri = require('datauri')
 const Nightmare = require('nightmare')
 
+const nm = Nightmare({
+  show: false,
+  width: 512,
+  height: 512,
+  enableLargerThanScreen: true,
+  frame: false,
+  switches: {
+    'force-device-scale-factor': 1
+  },
+})
+
 require('babel-register')({
   plugins: [
     'babel-plugin-transform-async-to-generator',
@@ -59,9 +70,9 @@ module.exports = (Root, _options = {}) => {
 
   const { width, height } = opts
 
-  const nightmare = Nightmare(opts)
+  // const nightmare = Nightmare(opts)
 
-  const result = nightmare
+  const result = nm
     .goto(data)
     .wait(_options.delay)
     .screenshot(null, {
