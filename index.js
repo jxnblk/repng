@@ -57,6 +57,7 @@ module.exports = (Root, _options = {}) => {
   })
 
   const pageres = new Pageres(opts)
+
   const sizes = opts.sizes === undefined ? [`${opts.width}x${opts.height}`] : opts.sizes;
   const result = outDir
     ? pageres
@@ -64,7 +65,7 @@ module.exports = (Root, _options = {}) => {
       .dest(outDir)
       .run()
     : pageres
-      .src(data, [`${opts.width}x${opts.height}`])
+      .src(data, sizes)
       .run()
 
   result.then(streams => {
