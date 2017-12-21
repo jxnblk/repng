@@ -30,13 +30,13 @@
     "meow": "^3.7.0",
     "ora": "^1.2.0",
     "pageres": "^4.4.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "webpack": "^2.4.1",
-    "webpack-dev-server": "^2.4.2"
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
   },
   "devDependencies": {
-    "ava": "^0.19.1"
+    "ava": "^0.24.0"
   },
   "keywords": [
     "react",
