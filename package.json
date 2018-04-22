@@ -1,40 +1,30 @@
 {
   "name": "repng",
-  "version": "2.0.0-alpha.1",
+  "version": "3.0.0-0",
   "description": "React component to PNG converter",
   "main": "index.js",
   "bin": {
-    "repng": "./bin/repng.js"
+    "repng": "./cli.js"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
-    "test": "ava",
-    "cli-test": "./bin/repng.js example/Alt.js -w 512 -h 512 -o example -F example/RobotoMono-Regular.woff2 -f repng",
-    "dev": "./bin/repng.js example/Alt.js --dev --port 8000",
-    "help": "./bin/repng.js --help"
+    "test": "nyc ava",
+    "start": "./cli.js example/Alt.js -w 512 -h 512 -d example",
+    "help": "./cli.js --help"
   },
   "dependencies": {
-    "babel-core": "^6.24.1",
-    "babel-loader": "^6.4.1",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.4.0",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "babel-register": "^6.24.1",
-    "datauri": "^1.0.4",
-    "json-loader": "^0.5.4",
-    "lodash": "^4.17.4",
-    "memory-fs": "^0.4.1",
-    "meow": "^3.7.0",
-    "nightmare": "^2.10.0",
-    "ora": "^1.2.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "webpack": "^2.4.1",
-    "webpack-dev-server": "^2.4.2"
+    "babel-register": "^6.26.0",
+    "datauri": "^1.1.0",
+    "meow": "^4.0.0",
+    "ora": "^2.0.0",
+    "puppeteer": "^1.3.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
   },
   "devDependencies": {
     "ava": "^0.19.1",
@@ -49,10 +39,6 @@
   "license": "MIT",
   "ava": {
     "babel": {
-      "plugins": [
-        "transform-async-to-generator",
-        "transform-runtime"
-      ],
       "presets": [
         "env",
         "stage-0",

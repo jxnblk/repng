@@ -1,17 +1,8 @@
-
-const fs = require('fs')
-const { Readable } = require('stream')
-const path = require('path')
-const { createElement: h } = require('react')
-const { renderToStaticMarkup } = require('react-dom/server')
-const Datauri = require('datauri')
-const Nightmare = require('nightmare')
-
 require('babel-register')({
-  plugins: [
-    'babel-plugin-transform-async-to-generator',
-    'babel-plugin-transform-runtime'
-  ].map(require.resolve),
+  // plugins: [
+  //   'babel-plugin-transform-async-to-generator',
+  //   'babel-plugin-transform-runtime'
+  // ].map(require.resolve),
   presets: [
     'babel-preset-env',
     'babel-preset-stage-0',
@@ -19,30 +10,72 @@ require('babel-register')({
   ].map(require.resolve)
 })
 
-module.exports = (Root, _options = {}) => {
+const fs = require('fs')
+const puppeteer = require('puppeteer')
+const { Readable } = require('stream')
+const path = require('path')
+const { createElement: h } = require('react')
+const { renderToStaticMarkup } = require('react-dom/server')
+const Datauri = require('datauri')
+
+
+module.exports = async (Component, userOptions = {}) => {
   const {
-    _file = 'repng',
-    props,
+    props = {},
     css = '',
     filename,
     outDir,
+    width,
+    height,
     scale = 1
-  } = _options
+  } = userOptions
 
-  const body = renderToStaticMarkup(h(Root, props))
-
-  // todo: move to createCss function
-  let wfcss = ''
-  if (_options.font) {
-    wfcss = getWebfontCss(_options.font)
-  }
+  const body = renderToStaticMarkup(h(Component, props))
 
   const data = getHtmlData({
     body,
     baseCss,
-    css: wfcss + css
+    css
   })
 
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  await page.goto(data)
+  const result = await page.screenshot({
+    type: 'png',
+    clip: {
+      x: 0,
+      y: 0,
+      width: parseInt(width),
+      height: parseInt(height),
+    },
+    omitBackground: true
+  })
+  await browser.close()
+
+  const stream = new Readable()
+  stream._read = () => {}
+
+  stream.push(result)
+  stream.push(null)
+
+  return stream
+}
+
+const baseCss = `*{box-sizing:border-box}body{margin:0}`
+
+const getHtmlData = ({ body, baseCss, css }) => {
+  const html = `<!DOCTYPE html><style>${baseCss + css}</style>${body}`
+  const htmlBuffer = new Buffer(html, 'utf8')
+  const datauri = new Datauri()
+  datauri.format('.html', htmlBuffer)
+  const data = datauri.content
+  return data
+}
+
+
+  // nightmare specific options
+  /*
   const opts = Object.assign({
     show: false,
     width: 512,
@@ -55,11 +88,9 @@ module.exports = (Root, _options = {}) => {
     webPreferences: {
       zoomFactor: scale
     },
-  }, _options)
-
-  const { width, height } = opts
-
-  const nightmare = Nightmare(opts)
+  }, userOptions)
+  // const { width, height } = opts
+  // const nightmare = Nightmare(opts)
 
   const result = nightmare
     .goto(data)
@@ -70,39 +101,4 @@ module.exports = (Root, _options = {}) => {
       width: width * scale,
       height: height * scale
     })
-
-  const stream = new Readable()
-  // wut?
-  stream._read = () => {}
-
-  result.then(buffer => {
-    stream.push(buffer)
-    stream.push(null)
-  })
-
-  return stream
-}
-
-const baseCss = `*{box-sizing:border-box}body{margin:0}`
-
-const getWebfontCss = (fontpath) => {
-  const { content } = new Datauri(fontpath)
-  const [ name, ext ] = fontpath.split('/').slice(-1)[0].split('.')
-  const css = (`@font-face {
-  font-family: '${name}';
-  font-style: normal;
-  font-weight: 400;
-  src: url(${content});
-}`)
-  return css
-}
-
-const getHtmlData = ({ body, baseCss, css }) => {
-  const html = `<!DOCTYPE html><style>${baseCss + css}</style>${body}`
-  const htmlBuffer = new Buffer(html, 'utf8')
-  const datauri = new Datauri()
-  datauri.format('.html', htmlBuffer)
-  const data = datauri.content
-  return data
-}
-
+  */
