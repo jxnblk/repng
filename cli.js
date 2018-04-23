@@ -32,12 +32,12 @@ const cli = meow(`
     -f --filename   Specify a custom output filename
     -w --width      Width of image
     -h --height     Height of image
-    -s --scale      Scale image
-    -d --delay      Delay in seconds before rendering image
     -p --props      Props in JSON format to pass to the React component
     --css           Path to CSS file to include
     --webfont       Path to custom webfont for rendering
 `, {
+  // -s --scale      Scale image
+  // -d --delay      Delay in seconds before rendering image
   flags: {
     outDir: {
       type: 'string',
