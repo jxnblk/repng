@@ -1,13 +1,5 @@
-
-const path = require('path')
-const { createElement: h } = require('react')
-const { renderToStaticMarkup } = require('react-dom/server')
-const Pageres = require('pageres')
-const Datauri = require('datauri')
-
 require('babel-register')({
   plugins: [
-    'babel-plugin-transform-async-to-generator',
     'babel-plugin-transform-runtime'
   ].map(require.resolve),
   presets: [
@@ -17,77 +9,32 @@ require('babel-register')({
   ].map(require.resolve)
 })
 
-module.exports = (Root, _options = {}) => {
-  const {
-    _file = 'repng',
-    props,
-    css = '',
-    filename,
-    outDir,
-  } = _options
+const fs = require('fs')
+const puppeteer = require('puppeteer')
+const { Readable } = require('stream')
+const path = require('path')
+const { createElement: h } = require('react')
+const { renderToStaticMarkup } = require('react-dom/server')
+const Datauri = require('datauri')
 
-  const html = renderToStaticMarkup(h(Root, props))
+const baseCSS = `*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif}`
 
+const getHtmlData = ({
+  body,
+  baseCSS,
+  css,
+  webfont
+}) => {
+  const fontCSS = webfont ? getWebfontCSS(webfont) : ''
+  const html = `<!DOCTYPE html><style>${baseCSS}${fontCSS}${css}</style>${body}`
+  const htmlBuffer = new Buffer(html, 'utf8')
   const datauri = new Datauri()
-  const buffer = new Buffer(html, 'utf8')
-
-  datauri.format('.html', buffer)
+  datauri.format('.html', htmlBuffer)
   const data = datauri.content
-
-  const key = _file.split('/').slice(-1)
-  const defaultFilename = `${key}-<%= date %>-<%= time %>-<%= size %>`
-
-  let wfcss = ''
-  if (_options.font) {
-    wfcss = getWebfontCss(_options.font)
-  }
-
-  // Using !important to override screenshot-stream's default color
-  // https://github.com/kevva/screenshot-stream/blob/master/stream.js#L83-L85
-  const defaultCss = `*{box-sizing:border-box}body{margin:0;background-color:transparent!important}${wfcss}`
-
-  const opts = Object.assign({
-    width: 1024,
-    height: 768,
-    crop: true,
-    scale: 1,
-  }, _options, {
-    css: defaultCss + css,
-    filename: filename || defaultFilename
-  })
-
-  const pageres = new Pageres(opts)
-
-  const result = outDir
-    ? pageres
-      .src(data, [`${opts.width}x${opts.height}`])
-      .dest(outDir)
-      .run()
-    : pageres
-      .src(data, [`${opts.width}x${opts.height}`])
-      .run()
-
-  result.then(streams => {
-    if (outDir) {
-      const msg = 'Saved file to ' + outDir
-      if (global.spinner) {
-        spinner.succeed(msg)
-      } else {
-        console.log(msg)
-      }
-    } else {
-      return streams
-    }
-  })
-
-  pageres.on('warning', () => {
-    return 'Error'
-  })
-
-  return result
+  return data
 }
 
-const getWebfontCss = (fontpath) => {
+const getWebfontCSS = (fontpath) => {
   const { content } = new Datauri(fontpath)
   const [ name, ext ] = fontpath.split('/').slice(-1)[0].split('.')
   const css = (`@font-face {
@@ -99,3 +46,51 @@ const getWebfontCss = (fontpath) => {
   return css
 }
 
+module.exports = async (Component, opts = {}) => {
+  const {
+    props = {},
+    css = '',
+    filename,
+    outDir,
+    width,
+    height,
+    scale = 1,
+    webfont
+  } = opts
+
+  const body = renderToStaticMarkup(h(Component, props))
+
+  const data = getHtmlData({
+    body,
+    baseCSS,
+    css,
+    webfont
+  })
+
+  // todo:
+  // - scale
+  // - delay
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  await page.goto(data)
+  const result = await page.screenshot({
+    type: 'png',
+    clip: {
+      x: 0,
+      y: 0,
+      width: parseInt(width),
+      height: parseInt(height),
+    },
+    omitBackground: true
+  })
+  await browser.close()
+
+  const stream = new Readable()
+  stream._read = () => {}
+
+  stream.push(result)
+  stream.push(null)
+
+
+  return stream
+}

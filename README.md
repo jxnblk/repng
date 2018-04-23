@@ -1,9 +1,9 @@
 
 # repng
 
-React component to PNG converter
+React component to PNG converter, built with [Puppeteer][puppeteer]
 
-![](example/repng.png)
+![](examples/repng.png)
 
 ```sh
 npm i -g repng
@@ -14,51 +14,20 @@ repng Icon.js --width 512 --height 512 --out-dir assets
 ```
 
 ```
-  Usage
-    $ repng <Root-component>
+Usage
+  $ repng <ReactComponent>
 
-  Options
-    -c --css        CSS file to include
-
-    -p --props      Props in JSON format to pass to the React component
-
-    -w --width      Width of image
-
-    -h --height     Height of image
-
-    -C --crop       Crop image to specified height
-
-    -s --scale      Scale image
-
-    -d --delay      Delay in seconds before rendering image
-
-    -o --out-dir    Directory to save file to
-
-    -f --filename   Name for rendered image
-
-    -F --font       Path to font to include as a webfont
-
-    -D --dev        Runs a webpack-dev-server
-
-    -P --port       Port to run the dev server on (default 8080)
+Options
+  -d --out-dir    Directory to save file to
+  -f --filename   Specify a custom output filename
+  -w --width      Width of image
+  -h --height     Height of image
+  -p --props      Props in JSON format to pass to the React component
+  --css           Path to CSS file to include
+  --webfont       Path to custom webfont for rendering
 ```
 
-## Development mode
-
-To preview the component in a dev server, run repng with the `--dev` flag
-and open <http://localhost:8080>
-
-```sh
-repng Icon.js --dev
-```
-
-Running the dev mode might require that you have both webpack and webpack-dev-server installed locally
-
-```sh
-npm i -D webpack webpack-dev-server
-```
-
-## Node.js Usage
+## Node.js API
 
 Repng can also be used as a node module.
 
@@ -79,4 +48,10 @@ result.then(streams => {
 })
 ```
 
+### Related
+
+- [Puppeteer][puppeteer]
+
 MIT License
+
+[puppeteer]: https://github.com/GoogleChrome/puppeteer
