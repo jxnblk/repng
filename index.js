@@ -46,7 +46,7 @@ const getWebfontCSS = (fontpath) => {
   return css
 }
 
-module.exports = async (Component, userOptions = {}) => {
+module.exports = async (Component, opts = {}) => {
   const {
     props = {},
     css = '',
@@ -56,7 +56,7 @@ module.exports = async (Component, userOptions = {}) => {
     height,
     scale = 1,
     webfont
-  } = userOptions
+  } = opts
 
   const body = renderToStaticMarkup(h(Component, props))
 
