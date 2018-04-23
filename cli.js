@@ -25,7 +25,7 @@ const getDateTime = () => {
 
 const cli = meow(`
   Usage
-    $ repng <Root-component>
+    $ repng <ReactComponent>
 
   Options
     -d --out-dir    Directory to save file to
