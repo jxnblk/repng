@@ -1,7 +1,7 @@
 
 # repng
 
-React component to PNG converter
+React component to PNG converter, built with [Puppeteer][puppeteer]
 
 ![](examples/repng.png)
 
@@ -50,4 +50,10 @@ result.then(streams => {
 })
 ```
 
+### Related
+
+- [Puppeteer][puppeteer]
+
 MIT License
+
+[puppeteer]: https://github.com/GoogleChrome/puppeteer
