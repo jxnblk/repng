@@ -17,15 +17,33 @@ const { createElement: h } = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const Datauri = require('datauri')
 
-const baseCss = `*{box-sizing:border-box}body{margin:0}`
+const baseCSS = `*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif}`
 
-const getHtmlData = ({ body, baseCss, css }) => {
-  const html = `<!DOCTYPE html><style>${baseCss + css}</style>${body}`
+const getHtmlData = ({
+  body,
+  baseCSS,
+  css,
+  webfont
+}) => {
+  const fontCSS = webfont ? getWebfontCSS(webfont) : ''
+  const html = `<!DOCTYPE html><style>${baseCSS}${fontCSS}${css}</style>${body}`
   const htmlBuffer = new Buffer(html, 'utf8')
   const datauri = new Datauri()
   datauri.format('.html', htmlBuffer)
   const data = datauri.content
   return data
+}
+
+const getWebfontCSS = (fontpath) => {
+  const { content } = new Datauri(fontpath)
+  const [ name, ext ] = fontpath.split('/').slice(-1)[0].split('.')
+  const css = (`@font-face {
+  font-family: '${name}';
+  font-style: normal;
+  font-weight: 400;
+  src: url(${content});
+}`)
+  return css
 }
 
 module.exports = async (Component, userOptions = {}) => {
@@ -36,15 +54,17 @@ module.exports = async (Component, userOptions = {}) => {
     outDir,
     width,
     height,
-    scale = 1
+    scale = 1,
+    webfont
   } = userOptions
 
   const body = renderToStaticMarkup(h(Component, props))
 
   const data = getHtmlData({
     body,
-    baseCss,
-    css
+    baseCSS,
+    css,
+    webfont
   })
 
   // todo:

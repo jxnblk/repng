@@ -29,17 +29,23 @@ const cli = meow(`
 
   Options
     -d --out-dir    Directory to save file to
+    -f --filename   Specify a custom output filename
     -w --width      Width of image
     -h --height     Height of image
     -s --scale      Scale image
     -d --delay      Delay in seconds before rendering image
     -p --props      Props in JSON format to pass to the React component
     --css           Path to CSS file to include
+    --webfont       Path to custom webfont for rendering
 `, {
   flags: {
     outDir: {
       type: 'string',
       alias: 'd'
+    },
+    filename: {
+      type: 'string',
+      alias: 'f'
     },
     width: {
       type: 'string',
@@ -72,14 +78,14 @@ const [ file ] = cli.input
 const spinner = ora(`Rendering ${file}`).start()
 
 const name = path.basename(file, path.extname(file))
-const filename = absolute(file)
+const filepath = absolute(file)
 const opts = Object.assign({
   outDir: process.cwd(),
-  filename,
+  filepath,
   width: 512,
   height: 512,
 }, cli.flags)
-const Component = require(filename).default || require(filename)
+const Component = require(filepath).default || require(filepath)
 
 opts.css = absolute(opts.css)
 opts.outDir = absolute(opts.outDir)
@@ -96,7 +102,9 @@ const run = async () => {
   try {
     const image = await render(Component, opts)
     const { date, time } = getDateTime()
-    const outFile = `${name}-${date}-${time}-${opts.width}x${opts.height}.png`
+    const outFile = opts.filename
+      ? opts.filename
+      : `${name}-${date}-${time}-${opts.width}x${opts.height}.png`
     const outPath = path.join(opts.outDir, outFile)
 
     const file = fs.createWriteStream(outPath)

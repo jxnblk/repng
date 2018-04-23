@@ -12,7 +12,7 @@
   "scripts": {
     "test": "nyc ava",
     "cover": "nyc report --reporter html",
-    "start": "./cli.js examples/Alt.js -w 512 -h 512 -d examples",
+    "start": "./cli.js examples/Alt.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
     "help": "./cli.js --help"
   },
   "dependencies": {
