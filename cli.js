@@ -31,7 +31,6 @@ const cli = meow(`
     -d --out-dir    Directory to save file to
     -w --width      Width of image
     -h --height     Height of image
-    -c --crop       Crop image to specified height
     -s --scale      Scale image
     -d --delay      Delay in seconds before rendering image
     -p --props      Props in JSON format to pass to the React component
@@ -49,10 +48,6 @@ const cli = meow(`
     height: {
       type: 'string',
       alias: 'h'
-    },
-    crop: {
-      type: 'boolean',
-      alias: 'c'
     },
     scale: {
       type: 'string',
@@ -100,13 +95,12 @@ if (opts.props) {
 const run = async () => {
   try {
     const image = await render(Component, opts)
-
     const { date, time } = getDateTime()
-
     const outFile = `${name}-${date}-${time}-${opts.width}x${opts.height}.png`
     const outPath = path.join(opts.outDir, outFile)
 
     const file = fs.createWriteStream(outPath)
+
     spinner.info('Creating stream')
 
     file.on('finish', () => {
@@ -114,12 +108,12 @@ const run = async () => {
       process.exit()
     })
 
-    file.on('readable', () => {
+    image.on('readable', () => {
       spinner.info(`Saving file`)
       image.pipe(file)
     })
 
-    file.on('error', err => {
+    image.on('error', err => {
       spinner.fail('Error: ' + err)
     })
   } catch (err) {
@@ -129,6 +123,3 @@ const run = async () => {
 }
 
 run()
-  .then(res => {
-    console.log('bye bye')
-  })
