@@ -26,7 +26,8 @@ const getHtmlData = ({
   webfont
 }) => {
   const fontCSS = webfont ? getWebfontCSS(webfont) : ''
-  const html = `<!DOCTYPE html><style>${baseCSS}${fontCSS}${css}</style>${body}`
+  const wrappedBody = `<div id="repng-wrap" style="display: inline-block">${body}</div>`
+  const html = `<!DOCTYPE html><style>${baseCSS}${fontCSS}${css}</style>${wrappedBody}`
   const htmlBuffer = new Buffer(html, 'utf8')
   const datauri = new Datauri()
   datauri.format('.html', htmlBuffer)
@@ -73,13 +74,20 @@ module.exports = async (Component, opts = {}) => {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.goto(data)
+
+  let rect = {}
+  if (!width && !height) {
+    const el = await page.$('#repng-wrap:first-child')
+    rect = await el.boxModel()
+  }
+
   const result = await page.screenshot({
     type: 'png',
     clip: {
       x: 0,
       y: 0,
-      width: parseInt(width),
-      height: parseInt(height),
+      width: parseInt(width || rect.width),
+      height: parseInt(height || rect.height),
     },
     omitBackground: true
   })
