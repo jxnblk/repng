@@ -41,7 +41,7 @@ const options = {
   }
 }
 
-const result = repng(Comp, options)
+const result = repng(Component, options)
 
 result.then(streams => {
   console.log('rendered component')
