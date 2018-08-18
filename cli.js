@@ -5,7 +5,7 @@ const meow = require('meow')
 const ora = require('ora')
 const render = require('./index')
 
-const absolute = (file = '') => !file || path.isAbsolute(file) 
+const absolute = (file = '') => !file || path.isAbsolute(file)
   ? file
   : path.join(process.cwd(), file)
 
@@ -116,9 +116,10 @@ const run = async () => {
       process.exit()
     })
 
+    image.pipe(file)
+
     image.on('readable', () => {
       spinner.info(`Saving file`)
-      image.pipe(file)
     })
 
     image.on('error', err => {
