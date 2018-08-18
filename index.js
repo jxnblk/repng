@@ -26,7 +26,7 @@ const getHtmlData = ({
   webfont
 }) => {
   const fontCSS = webfont ? getWebfontCSS(webfont) : ''
-  const html = `<!DOCTYPE html><style>${baseCSS}${fontCSS}${css}</style>${body}`
+  const html = `<!DOCTYPE html><meta charset="utf-8"><style>${baseCSS}${fontCSS}${css}</style>${body}`
   const htmlBuffer = Buffer.from(html, 'utf8')
   const datauri = new Datauri()
   datauri.format('.html', htmlBuffer)
