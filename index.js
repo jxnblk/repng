@@ -16,6 +16,7 @@ const path = require('path')
 const { createElement: h } = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const Datauri = require('datauri')
+const resolveCWD = require('resolve-cwd')
 
 const baseCSS = `*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif}`
 
@@ -23,12 +24,14 @@ const getHtmlData = ({
   body,
   baseCSS,
   css,
+  styles,
   webfont
 }) => {
   const fontCSS = webfont ? getWebfontCSS(webfont) : ''
   const html = `<!DOCTYPE html>
     <head>
     <meta charset="utf-8"><style>${baseCSS}${fontCSS}${css}</style>
+    ${styles}
     </head>
     ${body}`
   const htmlBuffer = Buffer.from(html, 'utf8')
@@ -59,15 +62,35 @@ module.exports = async (Component, opts = {}) => {
     width,
     height,
     scale = 1,
-    webfont
+    webfont,
+    cssLibrary
   } = opts
 
-  const body = renderToStaticMarkup(h(Component, props))
+  let body
+  let styles = ''
+  const el = h(Component, props)
+  switch (cssLibrary) {
+    case 'styled-components':
+      const { ServerStyleSheet } = require(resolveCWD('styled-components'))
+      const sheet = new ServerStyleSheet()
+      body = renderToStaticMarkup(
+        sheet.collectStyles(el)
+      )
+      styles = sheet.getStyleTags()
+      break
+    case 'emotion':
+      const { renderStylesToString } = require(resolveCWD('emotion-server'))
+      body = renderStylesToString(renderToString(el))
+      break
+    default:
+      body = renderToStaticMarkup(el)
+  }
 
   const data = getHtmlData({
     body,
     baseCSS,
     css,
+    styles,
     webfont
   })
 

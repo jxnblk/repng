@@ -4,6 +4,7 @@ const path = require('path')
 const meow = require('meow')
 const ora = require('ora')
 const render = require('./index')
+const readPkg = require('read-pkg-up')
 
 const absolute = (file = '') => !file || path.isAbsolute(file)
   ? file
@@ -36,8 +37,6 @@ const cli = meow(`
     --css           Path to CSS file to include
     --webfont       Path to custom webfont for rendering
 `, {
-  // -s --scale      Scale image
-  // -d --delay      Delay in seconds before rendering image
   flags: {
     outDir: {
       type: 'string',
@@ -69,6 +68,9 @@ const cli = meow(`
     },
     css: {
       type: 'string'
+    },
+    cssLibrary: {
+      type: 'string'
     }
   }
 })
@@ -79,6 +81,7 @@ const spinner = ora(`Rendering ${file}`).start()
 
 const name = path.basename(file, path.extname(file))
 const filepath = absolute(file)
+const { pkg } = readPkg.sync({ cwd: filepath })
 const opts = Object.assign({
   outDir: process.cwd(),
   filepath,
@@ -96,6 +99,14 @@ if (opts.css) {
 
 if (opts.props) {
   opts.props = JSON.parse(opts.props)
+}
+
+if (pkg && pkg.dependencies) {
+  if (pkg.dependencies['styled-components']) {
+    opts.cssLibrary = 'styled-components'
+  } else if (pkg.dependencies['emotion']) {
+    opts.cssLibrary = 'emotion'
+  }
 }
 
 const run = async () => {
