@@ -33,6 +33,7 @@ const getHtmlData = ({
     <meta charset="utf-8"><style>${baseCSS}${fontCSS}${css}</style>
     ${styles}
     </head>
+    <body style="display: inline-block">
     ${body}`
   const htmlBuffer = Buffer.from(html, 'utf8')
   const datauri = new Datauri()
@@ -100,13 +101,20 @@ module.exports = async (Component, opts = {}) => {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.goto(data)
+
+  let rect = {}
+  if (!width && !height) {
+    const bodyEl = await page.$('body')
+    rect = await bodyEl.boxModel()
+  }
+
   const result = await page.screenshot({
     type: 'png',
     clip: {
       x: 0,
       y: 0,
-      width: parseInt(width),
-      height: parseInt(height),
+      width: parseInt(width || rect.width),
+      height: parseInt(height || rect.height),
     },
     omitBackground: true
   })
