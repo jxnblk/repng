@@ -63,7 +63,8 @@ module.exports = async (Component, opts = {}) => {
     height,
     scale = 1,
     webfont,
-    cssLibrary
+    cssLibrary,
+    type = 'png' // jpg, png and pdf are allowed
   } = opts
 
   let body
@@ -100,16 +101,26 @@ module.exports = async (Component, opts = {}) => {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.goto(data)
-  const result = await page.screenshot({
-    type: 'png',
-    clip: {
-      x: 0,
-      y: 0,
-      width: parseInt(width),
-      height: parseInt(height),
-    },
-    omitBackground: true
-  })
+  let result
+  if (type === 'pdf') {
+    result = await page.pdf({
+      // width and height can be string here
+      // https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+      width,
+      height,
+    })
+  } else {
+    result = await page.screenshot({
+      type: type,
+      clip: {
+        x: 0,
+        y: 0,
+        width: parseInt(width),
+        height: parseInt(height),
+      },
+      omitBackground: true
+    })
+  }
   await browser.close()
 
   const stream = new Readable()
