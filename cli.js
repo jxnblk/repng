@@ -34,6 +34,7 @@ const cli = meow(`
     -w --width      Width of image
     -h --height     Height of image
     -p --props      Props in JSON format to pass to the React component
+    -t --type       Type of ouptut (png default) (pdf, jpeg or png)
     --css           Path to CSS file to include
     --webfont       Path to custom webfont for rendering
 `, {
@@ -71,6 +72,10 @@ const cli = meow(`
     },
     cssLibrary: {
       type: 'string'
+    },
+    type: {
+      type: 'string',
+      alias: 't'
     }
   }
 })

@@ -64,7 +64,7 @@ module.exports = async (Component, opts = {}) => {
     scale = 1,
     webfont,
     cssLibrary,
-    type = 'png' // jpg, png and pdf are allowed
+    type = 'png' // jpeg, png and pdf are allowed
   } = opts
 
   let body
