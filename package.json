@@ -3,6 +3,7 @@
   "version": "3.1.0",
   "description": "React component to PNG converter",
   "main": "index.js",
+  "repository": "https://github.com/jxnblk/repng.git",
   "bin": {
     "repng": "./cli.js"
   },
