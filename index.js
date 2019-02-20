@@ -1,7 +1,5 @@
 require('babel-register')({
-  plugins: [
-    'babel-plugin-transform-runtime'
-  ].map(require.resolve),
+  plugins: ['babel-plugin-transform-runtime'].map(require.resolve),
   presets: [
     'babel-preset-env',
     'babel-preset-stage-0',
@@ -20,13 +18,7 @@ const resolveCWD = require('resolve-cwd')
 
 const baseCSS = `*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif}`
 
-const getHtmlData = ({
-  body,
-  baseCSS,
-  css,
-  styles,
-  webfont
-}) => {
+const getHtmlData = ({ body, baseCSS, css, styles, webfont }) => {
   const fontCSS = webfont ? getWebfontCSS(webfont) : ''
   const html = `<!DOCTYPE html>
     <head>
@@ -41,15 +33,18 @@ const getHtmlData = ({
   return data
 }
 
-const getWebfontCSS = (fontpath) => {
+const getWebfontCSS = fontpath => {
   const { content } = new Datauri(fontpath)
-  const [ name, ext ] = fontpath.split('/').slice(-1)[0].split('.')
-  const css = (`@font-face {
+  const [name, ext] = fontpath
+    .split('/')
+    .slice(-1)[0]
+    .split('.')
+  const css = `@font-face {
   font-family: '${name}';
   font-style: normal;
   font-weight: 400;
   src: url(${content});
-}`)
+}`
   return css
 }
 
@@ -57,6 +52,7 @@ module.exports = async (Component, opts = {}) => {
   const {
     props = {},
     css = '',
+    puppeteer: puppeteerOptions = {},
     filename,
     outDir,
     width,
@@ -73,9 +69,7 @@ module.exports = async (Component, opts = {}) => {
     case 'styled-components':
       const { ServerStyleSheet } = require(resolveCWD('styled-components'))
       const sheet = new ServerStyleSheet()
-      body = renderToStaticMarkup(
-        sheet.collectStyles(el)
-      )
+      body = renderToStaticMarkup(sheet.collectStyles(el))
       styles = sheet.getStyleTags()
       break
     case 'emotion':
@@ -94,10 +88,7 @@ module.exports = async (Component, opts = {}) => {
     webfont
   })
 
-  // todo:
-  // - scale
-  // - delay
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch(puppeteerOptions)
   const page = await browser.newPage()
   await page.goto(data)
   const result = await page.screenshot({
@@ -106,7 +97,7 @@ module.exports = async (Component, opts = {}) => {
       x: 0,
       y: 0,
       width: parseInt(width),
-      height: parseInt(height),
+      height: parseInt(height)
     },
     omitBackground: true
   })
@@ -117,7 +108,6 @@ module.exports = async (Component, opts = {}) => {
 
   stream.push(result)
   stream.push(null)
-
 
   return stream
 }
