@@ -127,15 +127,8 @@ const run = async () => {
       process.exit()
     })
 
-    image.pipe(file)
-
-    image.on('readable', () => {
-      spinner.info(`Saving file`)
-    })
-
-    image.on('error', err => {
-      spinner.fail('Error: ' + err)
-    })
+    file.write(image)
+    file.end()
   } catch (err) {
     spinner.fail(`Error: ${err}`)
     process.exit(1)
