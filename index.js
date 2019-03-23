@@ -103,6 +103,7 @@ module.exports = async (Component, opts = {}) => {
   })
   await browser.close()
 
+<<<<<<< HEAD
   const stream = new Readable()
   stream._read = () => {}
 
@@ -110,4 +111,7 @@ module.exports = async (Component, opts = {}) => {
   stream.push(null)
 
   return stream
+=======
+  return result
+>>>>>>> 0d05e4508cfcb6018374e68997404104ca971bc1
 }
