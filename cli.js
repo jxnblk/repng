@@ -139,7 +139,7 @@ const run = async () => {
       process.exit()
     })
 
-    file.on('error', err => {
+    file.on('error', (err) => {
       spinner.fail('Error: ' + err)
     })
 

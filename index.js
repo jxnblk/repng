@@ -33,7 +33,7 @@ const getHtmlData = ({ body, baseCSS, css, styles, webfont }) => {
   return data
 }
 
-const getWebfontCSS = fontpath => {
+const getWebfontCSS = (fontpath) => {
   const { content } = new Datauri(fontpath)
   const [name, ext] = fontpath
     .split('/')
