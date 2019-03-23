@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const meow = require('meow');
-const ora = require('ora');
-const render = require('./index');
-const readPkg = require('read-pkg-up');
+const fs = require("fs");
+const path = require("path");
+const meow = require("meow");
+const ora = require("ora");
+const render = require("./index");
+const readPkg = require("read-pkg-up");
 
-const absolute = (file = '') =>
+const absolute = (file = "") =>
   !file || path.isAbsolute(file) ? file : path.join(process.cwd(), file);
 
 const getDateTime = () => {
@@ -18,8 +18,8 @@ const getDateTime = () => {
   const m = now.getMinutes();
   const s = now.getSeconds();
   return {
-    date: [Y, M, d].join('-'),
-    time: [h, m, s].join('.')
+    date: [Y, M, d].join("-"),
+    time: [h, m, s].join(".")
   };
 };
 
@@ -41,42 +41,42 @@ const cli = meow(
   {
     flags: {
       outDir: {
-        type: 'string',
-        alias: 'd'
+        type: "string",
+        alias: "d"
       },
       filename: {
-        type: 'string',
-        alias: 'f'
+        type: "string",
+        alias: "f"
       },
       width: {
-        type: 'string',
-        alias: 'w'
+        type: "string",
+        alias: "w"
       },
       height: {
-        type: 'string',
-        alias: 'h'
+        type: "string",
+        alias: "h"
       },
       scale: {
-        type: 'string',
-        alias: 's'
+        type: "string",
+        alias: "s"
       },
       delay: {
-        type: 'string',
-        alias: 'D'
+        type: "string",
+        alias: "D"
       },
       props: {
-        type: 'string',
-        alias: 'p'
+        type: "string",
+        alias: "p"
       },
       css: {
-        type: 'string'
+        type: "string"
       },
       cssLibrary: {
-        type: 'string'
+        type: "string"
       },
       puppeteer: {
-        type: 'string',
-        alias: 'u'
+        type: "string",
+        alias: "u"
       }
     }
   }
@@ -104,7 +104,7 @@ opts.css = absolute(opts.css);
 opts.outDir = absolute(opts.outDir);
 
 if (opts.css) {
-  opts.css = fs.readFileSync(opts.css, 'utf8');
+  opts.css = fs.readFileSync(opts.css, "utf8");
 }
 
 if (opts.props) {
@@ -116,10 +116,10 @@ if (opts.puppeteer) {
 }
 
 if (pkg && pkg.dependencies) {
-  if (pkg.dependencies['styled-components']) {
-    opts.cssLibrary = 'styled-components';
-  } else if (pkg.dependencies['emotion']) {
-    opts.cssLibrary = 'emotion';
+  if (pkg.dependencies["styled-components"]) {
+    opts.cssLibrary = "styled-components";
+  } else if (pkg.dependencies["emotion"]) {
+    opts.cssLibrary = "emotion";
   }
 }
 
@@ -134,16 +134,16 @@ const run = async () => {
 
     const file = fs.createWriteStream(outPath);
 
-    file.on('finish', () => {
+    file.on("finish", () => {
       spinner.succeed(`File saved to ${outPath}`);
       process.exit();
     });
 
-    file.on('error', err => {
-      spinner.fail('Error: ' + err);
+    file.on("error", err => {
+      spinner.fail("Error: " + err);
     });
 
-    spinner.info('Saving file');
+    spinner.info("Saving file");
 
     file.write(image);
     file.end();
