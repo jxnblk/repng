@@ -36,20 +36,20 @@ Please sse puppeteer directly for a Node.js solution
 Repng can also be used as a node module.
 
 ```js
-const repng = require("repng");
-const Component = require("./Component");
+const repng = require('repng');
+const Component = require('./Component');
 
 const options = {
   props: {
-    title: "hello"
+    title: 'hello'
   }
 };
 
-const result = repng(Component, options);
+const result = repng(Component, options)
 
 result.then(streams => {
   // see cli.js for example usage
-  console.log("rendered component");
+  console.log('rendered component')
 });
 ```
 -->
