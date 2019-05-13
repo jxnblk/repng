@@ -49,6 +49,6 @@ test('returns a stream', async t => {
     }
   })
 
-  t.true(isStream(result))
+  t.true(Buffer.isBuffer(result))
 })
 
