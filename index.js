@@ -35,11 +35,7 @@ const getHtmlData = ({
     </head>
     <body style="display: inline-block">
     ${body}`
-  const htmlBuffer = Buffer.from(html, 'utf8')
-  const datauri = new Datauri()
-  datauri.format('.html', htmlBuffer)
-  const data = datauri.content
-  return data
+  return html
 }
 
 const getWebfontCSS = (fontpath) => {
@@ -87,7 +83,7 @@ module.exports = async (Component, opts = {}) => {
       body = renderToStaticMarkup(el)
   }
 
-  const data = getHtmlData({
+  const html = getHtmlData({
     body,
     baseCSS,
     css,
@@ -100,7 +96,7 @@ module.exports = async (Component, opts = {}) => {
   // - delay
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  await page.goto(data)
+  await page.setContent(html)
 
   let rect = {}
   if (!width && !height) {
@@ -120,12 +116,5 @@ module.exports = async (Component, opts = {}) => {
   })
   await browser.close()
 
-  const stream = new Readable()
-  stream._read = () => {}
-
-  stream.push(result)
-  stream.push(null)
-
-
-  return stream
+  return result
 }
