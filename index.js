@@ -60,7 +60,8 @@ module.exports = async (Component, opts = {}) => {
     height,
     scale = 1,
     webfont,
-    cssLibrary
+    cssLibrary,
+    type = 'png' // jpeg, png and pdf are allowed
   } = opts
 
   let body
@@ -104,16 +105,27 @@ module.exports = async (Component, opts = {}) => {
     rect = await bodyEl.boxModel()
   }
 
-  const result = await page.screenshot({
-    type: 'png',
-    clip: {
-      x: 0,
-      y: 0,
+  let result
+  if (type === 'pdf') {
+    result = await page.pdf({
+      // width and height can be string here
+      // https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
       width: parseInt(width || rect.width),
       height: parseInt(height || rect.height),
-    },
-    omitBackground: true
-  })
+    })
+  } else {
+    result = await page.screenshot({
+      type: type,
+      clip: {
+        x: 0,
+        y: 0,
+        width: parseInt(width || rect.width),
+        height: parseInt(height || rect.height),
+      },
+      omitBackground: true
+    })
+  }
+
   await browser.close()
 
   return result
