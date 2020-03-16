@@ -1,6 +1,6 @@
 {
   "name": "repng",
-  "version": "3.2.0",
+  "version": "4.0.0-0",
   "description": "React component to PNG converter",
   "main": "index.js",
   "repository": "https://github.com/jxnblk/repng.git",
