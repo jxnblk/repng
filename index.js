@@ -50,37 +50,21 @@ const getWebfontCSS = (fontpath) => {
 
 module.exports = async (Component, opts = {}) => {
   const {
-    props = {},
     css = '',
     filename,
     outDir,
-    scale = 1,
     webfont,
-    cssLibrary,
     type = 'png', // jpeg, png and pdf are allowed
   } = opts
 
-  props.__options = opts
+  const props = Object.assign({
+    width: opts.width,
+    height: opts.height,
+  }, opts.props)
 
-  let body
   let styles = ''
   const el = h(Component, props)
-  switch (cssLibrary) {
-    case 'styled-components':
-      const { ServerStyleSheet } = require(resolveCWD('styled-components'))
-      const sheet = new ServerStyleSheet()
-      body = renderToStaticMarkup(
-        sheet.collectStyles(el)
-      )
-      styles = sheet.getStyleTags()
-      break
-    case 'emotion':
-      const { renderStylesToString } = require(resolveCWD('emotion-server'))
-      body = renderStylesToString(renderToString(el))
-      break
-    default:
-      body = renderToStaticMarkup(el)
-  }
+  const body = renderToStaticMarkup(el)
 
   const html = getHtmlData({
     body,

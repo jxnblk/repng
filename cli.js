@@ -33,7 +33,7 @@ const cli = meow(`
     -f --filename   Specify a custom output filename
     -w --width      Width of image
     -h --height     Height of image
-    -p --props      Props in JSON format to pass to the React component
+    -p --props      Props in JSON format (or path to JSON file) to pass to the React component
     -t --type       Type of ouptut (png default) (pdf, jpeg or png)
     --css           Path to CSS file to include
     --webfont       Path to custom webfont for rendering
@@ -60,9 +60,6 @@ const cli = meow(`
       alias: 'p'
     },
     css: {
-      type: 'string'
-    },
-    cssLibrary: {
       type: 'string'
     },
     type: {
@@ -96,18 +93,21 @@ if (opts.css) {
 }
 
 if (opts.props) {
-  opts.props = JSON.parse(opts.props)
+  const stat = fs.statSync(opts.props)
+  if (stat.isFile()) {
+    const req = path.join(process.cwd(), opts.props)
+    try {
+      opts.props = require(req)
+    } catch (e) {
+      console.log(e)
+      opts.props = {}
+    }
+  } else {
+    opts.props = JSON.parse(opts.props)
+  }
 }
 
 if (opts.puppeteer) opts.puppeteer = JSON.parse(opts.puppeteer)
-
-if (pkg && pkg.dependencies) {
-  if (pkg.dependencies['styled-components']) {
-    opts.cssLibrary = 'styled-components'
-  } else if (pkg.dependencies['emotion']) {
-    opts.cssLibrary = 'emotion'
-  }
-}
 
 const run = async () => {
   try {
