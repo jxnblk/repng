@@ -125,22 +125,19 @@ const run = async () => {
 
     const file = fs.createWriteStream(outPath)
 
-    spinner.info('Creating stream')
-
     file.on('finish', () => {
       spinner.succeed(`File saved to ${outPath}`)
       process.exit()
     })
 
-    image.pipe(file)
-
-    image.on('readable', () => {
-      spinner.info(`Saving file`)
-    })
-
-    image.on('error', err => {
+    file.on('error', err => {
       spinner.fail('Error: ' + err)
     })
+
+    spinner.info('Saving file')
+
+    file.write(image)
+    file.end()
   } catch (err) {
     spinner.fail(`Error: ${err}`)
     process.exit(1)

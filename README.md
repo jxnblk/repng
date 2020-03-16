@@ -28,6 +28,10 @@ Options
   --webfont       Path to custom webfont for rendering
 ```
 
+<!--
+
+Please sse puppeteer directly for a Node.js solution
+
 ## Node.js API
 
 Repng can also be used as a node module.
@@ -48,6 +52,7 @@ result.then(streams => {
   console.log('rendered component')
 })
 ```
+-->
 
 ### Related
 

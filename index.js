@@ -33,12 +33,9 @@ const getHtmlData = ({
     <meta charset="utf-8"><style>${baseCSS}${fontCSS}${css}</style>
     ${styles}
     </head>
+    <body style="display: inline-block">
     ${body}`
-  const htmlBuffer = Buffer.from(html, 'utf8')
-  const datauri = new Datauri()
-  datauri.format('.html', htmlBuffer)
-  const data = datauri.content
-  return data
+  return html
 }
 
 const getWebfontCSS = (fontpath) => {
@@ -87,7 +84,7 @@ module.exports = async (Component, opts = {}) => {
       body = renderToStaticMarkup(el)
   }
 
-  const data = getHtmlData({
+  const html = getHtmlData({
     body,
     baseCSS,
     css,
@@ -100,14 +97,21 @@ module.exports = async (Component, opts = {}) => {
   // - delay
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  await page.goto(data)
+  await page.setContent(html)
+
+  let rect = {}
+  if (!width && !height) {
+    const bodyEl = await page.$('body')
+    rect = await bodyEl.boxModel()
+  }
+
   let result
   if (type === 'pdf') {
     result = await page.pdf({
       // width and height can be string here
       // https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
-      width,
-      height,
+      width: parseInt(width || rect.width),
+      height: parseInt(height || rect.height),
     })
   } else {
     result = await page.screenshot({
@@ -115,20 +119,14 @@ module.exports = async (Component, opts = {}) => {
       clip: {
         x: 0,
         y: 0,
-        width: parseInt(width),
-        height: parseInt(height),
+        width: parseInt(width || rect.width),
+        height: parseInt(height || rect.height),
       },
       omitBackground: true
     })
   }
+
   await browser.close()
 
-  const stream = new Readable()
-  stream._read = () => {}
-
-  stream.push(result)
-  stream.push(null)
-
-
-  return stream
+  return result
 }
