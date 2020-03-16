@@ -26,33 +26,8 @@ Options
   -t --type       Type of ouptut (png default) (pdf, jpeg or png)
   --css           Path to CSS file to include
   --webfont       Path to custom webfont for rendering
+  --puppeteer     Options for Puppeteer in JSON format
 ```
-
-<!--
-
-Please sse puppeteer directly for a Node.js solution
-
-## Node.js API
-
-Repng can also be used as a node module.
-
-```js
-const repng = require('repng')
-const Component = require('./Component')
-
-const options = {
-  props: {
-    title: 'hello'
-  }
-}
-
-const result = repng(Component, options)
-
-result.then(streams => {
-  console.log('rendered component')
-})
-```
--->
 
 ### Related
 
