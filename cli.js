@@ -55,14 +55,6 @@ const cli = meow(`
       type: 'string',
       alias: 'h'
     },
-    scale: {
-      type: 'string',
-      alias: 's'
-    },
-    delay: {
-      type: 'string',
-      alias: 'D'
-    },
     props: {
       type: 'string',
       alias: 'p'
@@ -76,7 +68,10 @@ const cli = meow(`
     type: {
       type: 'string',
       alias: 't'
-    }
+    },
+    puppeteer: {
+      type: 'string',
+    },
   }
 })
 
@@ -90,8 +85,6 @@ const { pkg } = readPkg.sync({ cwd: filepath })
 const opts = Object.assign({
   outDir: process.cwd(),
   filepath,
-  width: 512,
-  height: 512,
 }, cli.flags)
 const Component = require(filepath).default || require(filepath)
 
@@ -105,6 +98,8 @@ if (opts.css) {
 if (opts.props) {
   opts.props = JSON.parse(opts.props)
 }
+
+if (opts.puppeteer) opts.puppeteer = JSON.parse(opts.puppeteer)
 
 if (pkg && pkg.dependencies) {
   if (pkg.dependencies['styled-components']) {
@@ -120,7 +115,7 @@ const run = async () => {
     const { date, time } = getDateTime()
     const outFile = opts.filename
       ? opts.filename
-      : `${name}-${date}-${time}-${opts.width}x${opts.height}.png`
+      : `${name}-${date}-${time}.png`
     const outPath = path.join(opts.outDir, outFile)
 
     const file = fs.createWriteStream(outPath)

@@ -8,14 +8,15 @@
     "repng": "./cli.js"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "scripts": {
     "test": "nyc ava",
     "cover": "nyc report --reporter html",
-    "start": "npm run example:repng && npm run example:america",
+    "start": "npm run example:repng && npm run example:america && npm run example:tomato",
     "example:repng": "./cli.js examples/repng.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
     "example:america": "./cli.js examples/america.js -w 400 -h 300 -d examples -f america.png",
+    "example:tomato": "./cli.js examples/tomato.js -d examples -f tomato.png",
     "help": "./cli.js --help"
   },
   "dependencies": {
