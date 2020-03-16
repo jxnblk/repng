@@ -31,12 +31,9 @@ const getHtmlData = ({
     <meta charset="utf-8"><style>${baseCSS}${fontCSS}${css}</style>
     ${styles}
     </head>
+    <body style="display: inline-block">
     ${body}`
-  const htmlBuffer = Buffer.from(html, 'utf8')
-  const datauri = new Datauri()
-  datauri.format('.html', htmlBuffer)
-  const data = datauri.content
-  return data
+  return html
 }
 
 const getWebfontCSS = (fontpath) => {
@@ -61,7 +58,8 @@ module.exports = async (Component, opts = {}) => {
     height,
     scale = 1,
     webfont,
-    cssLibrary
+    cssLibrary,
+    type = 'png' // jpeg, png and pdf are allowed
   } = opts
 
   props.__options = opts
@@ -86,7 +84,7 @@ module.exports = async (Component, opts = {}) => {
       body = renderToStaticMarkup(el)
   }
 
-  const data = getHtmlData({
+  const html = getHtmlData({
     body,
     baseCSS,
     css,
@@ -99,17 +97,35 @@ module.exports = async (Component, opts = {}) => {
   // - delay
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  await page.goto(data)
-  const result = await page.screenshot({
-    type: 'png',
-    clip: {
-      x: 0,
-      y: 0,
-      width: parseInt(width),
-      height: parseInt(height),
-    },
-    omitBackground: true
-  })
+  await page.setContent(html)
+
+  let rect = {}
+  if (!width && !height) {
+    const bodyEl = await page.$('body')
+    rect = await bodyEl.boxModel()
+  }
+
+  let result
+  if (type === 'pdf') {
+    result = await page.pdf({
+      // width and height can be string here
+      // https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+      width: parseInt(width || rect.width),
+      height: parseInt(height || rect.height),
+    })
+  } else {
+    result = await page.screenshot({
+      type: type,
+      clip: {
+        x: 0,
+        y: 0,
+        width: parseInt(width || rect.width),
+        height: parseInt(height || rect.height),
+      },
+      omitBackground: true
+    })
+  }
+
   await browser.close()
 
   return result
