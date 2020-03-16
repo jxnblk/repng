@@ -1,11 +1,9 @@
-require('babel-register')({
+require('@babel/register')({
   plugins: [
-    'babel-plugin-transform-runtime'
   ].map(require.resolve),
   presets: [
-    'babel-preset-env',
-    'babel-preset-stage-0',
-    'babel-preset-react'
+    '@babel/preset-env',
+    '@babel/preset-react'
   ].map(require.resolve)
 })
 
@@ -63,6 +61,8 @@ module.exports = async (Component, opts = {}) => {
     cssLibrary,
     type = 'png' // jpeg, png and pdf are allowed
   } = opts
+
+  props.__options = opts
 
   let body
   let styles = ''
