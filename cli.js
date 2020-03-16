@@ -33,7 +33,7 @@ const cli = meow(`
     -f --filename   Specify a custom output filename
     -w --width      Width of image
     -h --height     Height of image
-    -p --props      Props in JSON format to pass to the React component
+    -p --props      Props in JSON format (or path to JSON file) to pass to the React component
     -t --type       Type of ouptut (png default) (pdf, jpeg or png)
     --css           Path to CSS file to include
     --webfont       Path to custom webfont for rendering
@@ -55,14 +55,6 @@ const cli = meow(`
       type: 'string',
       alias: 'h'
     },
-    scale: {
-      type: 'string',
-      alias: 's'
-    },
-    delay: {
-      type: 'string',
-      alias: 'D'
-    },
     props: {
       type: 'string',
       alias: 'p'
@@ -70,13 +62,13 @@ const cli = meow(`
     css: {
       type: 'string'
     },
-    cssLibrary: {
-      type: 'string'
-    },
     type: {
       type: 'string',
       alias: 't'
-    }
+    },
+    puppeteer: {
+      type: 'string',
+    },
   }
 })
 
@@ -90,8 +82,6 @@ const { pkg } = readPkg.sync({ cwd: filepath })
 const opts = Object.assign({
   outDir: process.cwd(),
   filepath,
-  width: 512,
-  height: 512,
 }, cli.flags)
 const Component = require(filepath).default || require(filepath)
 
@@ -103,16 +93,21 @@ if (opts.css) {
 }
 
 if (opts.props) {
-  opts.props = JSON.parse(opts.props)
-}
-
-if (pkg && pkg.dependencies) {
-  if (pkg.dependencies['styled-components']) {
-    opts.cssLibrary = 'styled-components'
-  } else if (pkg.dependencies['emotion']) {
-    opts.cssLibrary = 'emotion'
+  const stat = fs.statSync(opts.props)
+  if (stat.isFile()) {
+    const req = path.join(process.cwd(), opts.props)
+    try {
+      opts.props = require(req)
+    } catch (e) {
+      console.log(e)
+      opts.props = {}
+    }
+  } else {
+    opts.props = JSON.parse(opts.props)
   }
 }
+
+if (opts.puppeteer) opts.puppeteer = JSON.parse(opts.puppeteer)
 
 const run = async () => {
   try {
@@ -120,7 +115,7 @@ const run = async () => {
     const { date, time } = getDateTime()
     const outFile = opts.filename
       ? opts.filename
-      : `${name}-${date}-${time}-${opts.width}x${opts.height}.png`
+      : `${name}-${date}-${time}.png`
     const outPath = path.join(opts.outDir, outFile)
 
     const file = fs.createWriteStream(outPath)

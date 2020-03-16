@@ -31,7 +31,7 @@ const getHtmlData = ({
     <meta charset="utf-8"><style>${baseCSS}${fontCSS}${css}</style>
     ${styles}
     </head>
-    <body style="display: inline-block">
+    <body style="display:inline-block">
     ${body}`
   return html
 }
@@ -50,39 +50,21 @@ const getWebfontCSS = (fontpath) => {
 
 module.exports = async (Component, opts = {}) => {
   const {
-    props = {},
     css = '',
     filename,
     outDir,
-    width,
-    height,
-    scale = 1,
     webfont,
-    cssLibrary,
-    type = 'png' // jpeg, png and pdf are allowed
+    type = 'png', // jpeg, png and pdf are allowed
   } = opts
 
-  props.__options = opts
+  const props = Object.assign({
+    width: opts.width,
+    height: opts.height,
+  }, opts.props)
 
-  let body
   let styles = ''
   const el = h(Component, props)
-  switch (cssLibrary) {
-    case 'styled-components':
-      const { ServerStyleSheet } = require(resolveCWD('styled-components'))
-      const sheet = new ServerStyleSheet()
-      body = renderToStaticMarkup(
-        sheet.collectStyles(el)
-      )
-      styles = sheet.getStyleTags()
-      break
-    case 'emotion':
-      const { renderStylesToString } = require(resolveCWD('emotion-server'))
-      body = renderStylesToString(renderToString(el))
-      break
-    default:
-      body = renderToStaticMarkup(el)
-  }
+  const body = renderToStaticMarkup(el)
 
   const html = getHtmlData({
     body,
@@ -92,26 +74,23 @@ module.exports = async (Component, opts = {}) => {
     webfont
   })
 
-  // todo:
-  // - scale
-  // - delay
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch(opts.puppeteer)
   const page = await browser.newPage()
   await page.setContent(html)
 
   let rect = {}
-  if (!width && !height) {
+  if (!opts.width && !opts.height) {
     const bodyEl = await page.$('body')
     rect = await bodyEl.boxModel()
   }
+  const width = parseInt(opts.width || rect.width)
+  const height = parseInt(opts.height || rect.height)
 
   let result
   if (type === 'pdf') {
     result = await page.pdf({
-      // width and height can be string here
-      // https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
-      width: parseInt(width || rect.width),
-      height: parseInt(height || rect.height),
+      width,
+      height,
     })
   } else {
     result = await page.screenshot({
@@ -119,8 +98,8 @@ module.exports = async (Component, opts = {}) => {
       clip: {
         x: 0,
         y: 0,
-        width: parseInt(width || rect.width),
-        height: parseInt(height || rect.height),
+        width,
+        height,
       },
       omitBackground: true
     })
