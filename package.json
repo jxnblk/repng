@@ -17,6 +17,7 @@
     "example:repng": "./cli.js examples/repng.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
     "example:america": "./cli.js examples/america.js -w 400 -h 300 -d examples -f america.png",
     "example:tomato": "./cli.js examples/tomato.js -d examples -f tomato.png",
+    "example:beep": "./cli.js examples/beep.js -d examples -f beep.png",
     "help": "./cli.js --help"
   },
   "dependencies": {
