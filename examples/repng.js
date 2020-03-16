@@ -1,4 +1,3 @@
-
 // JSX and ES2015 are supported as well
 
 import React from 'react'
@@ -34,4 +33,3 @@ const Svg = props => (
 )
 
 export default Svg
-

@@ -13,7 +13,9 @@
   "scripts": {
     "test": "nyc ava",
     "cover": "nyc report --reporter html",
-    "start": "./cli.js examples/Alt.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
+    "start": "npm run example:repng && npm run example:america",
+    "example:repng": "./cli.js examples/repng.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
+    "example:america": "./cli.js examples/america.js -w 400 -h 300 -d examples -f america.png",
     "help": "./cli.js --help"
   },
   "dependencies": {
@@ -24,7 +26,7 @@
     "datauri": "^2.0.0",
     "meow": "^6.0.1",
     "ora": "^4.0.3",
-    "puppeteer": "^1.13.0",
+    "puppeteer": "^2.1.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "read-pkg-up": "^7.0.1",
