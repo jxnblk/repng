@@ -86,6 +86,11 @@ module.exports = async (Component, opts = {}) => {
   const width = parseInt(opts.width || rect.width)
   const height = parseInt(opts.height || rect.height)
 
+  await page.setViewport({
+    width,
+    height,
+  })
+
   let result
   if (type === 'pdf') {
     result = await page.pdf({
