@@ -23,7 +23,7 @@ Options
   -w --width      Width of image
   -h --height     Height of image
   -p --props      Props in JSON format (or path to JSON file) to pass to the React component
-  -t --type       Type of ouptut (png default) (pdf, jpeg or png)
+  -t --type       Type of output (png default) (pdf, jpeg or png)
   --css           Path to CSS file to include
   --webfont       Path to custom webfont for rendering
   --puppeteer     Options for Puppeteer in JSON format
