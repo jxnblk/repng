@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": "https://github.com/jxnblk/repng.git",
   "bin": {
-    "repng": "./cli.js"
+    "repng": "ts-node ./cli.js"
   },
   "engines": {
     "node": ">=10.0.0"
@@ -13,8 +13,8 @@
   "scripts": {
     "test": "nyc ava",
     "cover": "nyc report --reporter html",
-    "start": "npm run example:repng && npm run example:america && npm run example:tomato",
-    "example:repng": "./cli.js examples/repng.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
+    "start": "npm run example:repng",
+    "example:repng": "ts-node ./cli.js examples/repng.js -w 512 -h 512 -d examples -f repng.png --webfont examples/RobotoMono-Regular.woff2",
     "example:america": "./cli.js examples/america.js -w 400 -h 300 -d examples -f america.png",
     "example:tomato": "./cli.js examples/tomato.js -d examples -f tomato.png",
     "example:beep": "./cli.js examples/beep.js -d examples -f beep.png",
@@ -32,7 +32,9 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "read-pkg-up": "^7.0.1",
-    "resolve-cwd": "^3.0.0"
+    "resolve-cwd": "^3.0.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
   },
   "devDependencies": {
     "ava": "^3.5.0",
