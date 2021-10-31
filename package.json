@@ -18,7 +18,9 @@
     "example:america": "./cli.js examples/america.js -w 400 -h 300 -d examples -f america.png",
     "example:tomato": "./cli.js examples/tomato.js -d examples -f tomato.png",
     "example:beep": "./cli.js examples/beep.js -d examples -f beep.png",
-    "help": "./cli.js --help"
+    "help": "./cli.js --help",
+    "lint": "eslint .",
+    "prettier": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
     "@babel/core": "^7.4.4",
@@ -36,8 +38,11 @@
   },
   "devDependencies": {
     "ava": "^3.5.0",
+    "eslint": "^8.1.0",
+    "eslint-config-prettier": "^8.3.0",
     "is-stream": "^2.0.0",
-    "nyc": "^15.0.0"
+    "nyc": "^15.0.0",
+    "prettier": "^2.4.1"
   },
   "keywords": [
     "react",
