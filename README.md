@@ -1,7 +1,7 @@
 
 # repng
 
-React component to PNG converter, built with [Puppeteer][puppeteer]
+React component to PNG converter, built with [Playwright][playwright]
 
 ![](examples/repng.png)
 
@@ -26,13 +26,13 @@ Options
   -t --type       Type of output (png default) (pdf, jpeg or png)
   --css           Path to CSS file to include
   --webfont       Path to custom webfont for rendering
-  --puppeteer     Options for Puppeteer in JSON format
+  --launcher      Options for browser launcher in JSON format
 ```
 
 ### Related
 
-- [Puppeteer][puppeteer]
+- [Playwright][playwright]
 
 MIT License
 
-[puppeteer]: https://github.com/GoogleChrome/puppeteer
+[playwright]: https://playwright.dev/

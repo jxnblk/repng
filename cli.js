@@ -37,6 +37,7 @@ const cli = meow(`
     -t --type       Type of ouptut (png default) (pdf, jpeg or png)
     --css           Path to CSS file to include
     --webfont       Path to custom webfont for rendering
+    --launcher      Options for browser launcher in JSON format
 `, {
   flags: {
     outDir: {
@@ -66,7 +67,7 @@ const cli = meow(`
       type: 'string',
       alias: 't'
     },
-    puppeteer: {
+    launcher: {
       type: 'string',
     },
   }
@@ -107,7 +108,8 @@ if (opts.props) {
   }
 }
 
-if (opts.puppeteer) opts.puppeteer = JSON.parse(opts.puppeteer)
+// https://playwright.dev/docs/api/class-browsertype#browser-type-launch
+if (opts.launcher) opts.launcher = JSON.parse(opts.launcher)
 
 const run = async () => {
   try {
