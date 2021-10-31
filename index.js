@@ -8,7 +8,7 @@ require('@babel/register')({
 })
 
 const fs = require('fs')
-const puppeteer = require('puppeteer')
+const { chromium, firefox, webkit } = require('playwright')
 const { Readable } = require('stream')
 const path = require('path')
 const { createElement: h } = require('react')
@@ -74,7 +74,7 @@ module.exports = async (Component, opts = {}) => {
     webfont
   })
 
-  const browser = await puppeteer.launch(opts.puppeteer)
+  const browser = await chromium.launch(opts.launcher)
   const page = await browser.newPage()
   await page.setContent(html)
 
@@ -86,18 +86,20 @@ module.exports = async (Component, opts = {}) => {
   const width = parseInt(opts.width || rect.width)
   const height = parseInt(opts.height || rect.height)
 
-  await page.setViewport({
+  await page.setViewportSize({
     width,
     height,
   })
 
   let result
   if (type === 'pdf') {
+    // https://playwright.dev/docs/api/class-page#page-pdf
     result = await page.pdf({
       width,
       height,
     })
   } else {
+    // https://playwright.dev/docs/api/class-page#page-screenshot
     result = await page.screenshot({
       type: type,
       clip: {

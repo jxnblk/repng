@@ -28,7 +28,7 @@
     "datauri": "^2.0.0",
     "meow": "^6.0.1",
     "ora": "^4.0.3",
-    "puppeteer": "^2.1.1",
+    "playwright": "^1.16.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "read-pkg-up": "^7.0.1",
